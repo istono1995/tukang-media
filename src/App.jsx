@@ -2584,6 +2584,216 @@ function BuyerDashboard({ user, onBack }) {
 }
 
 
+
+// ============================================================
+// LANDING PAGE (shown before login)
+// ============================================================
+function LandingPage({ onLogin, onRegister, siteSettings }) {
+  const ss = siteSettings || {};
+  const primary = ss.primary_color || "#2563eb";
+  const [faqOpen, setFaqOpen] = React.useState(null);
+
+  const features = [
+    {icon:"⚡",title:"Proses Instan",desc:"Pesanan diproses cepat dan real-time. Tidak perlu menunggu lama."},
+    {icon:"🔒",title:"100% Aman",desc:"Sistem keamanan berlapis dengan enkripsi data penuh."},
+    {icon:"💰",title:"Harga Terjangkau",desc:"Harga terbaik dengan kualitas layanan premium."},
+    {icon:"🎯",title:"Hasil Terjamin",desc:"Garansi hasil sesuai pesanan atau uang kembali."},
+    {icon:"📞",title:"Support 24 Jam",desc:"Tim admin siap membantu kamu kapan saja."},
+    {icon:"🏆",title:"Terpercaya",desc:"Ribuan pelanggan puas telah menggunakan layanan kami."},
+  ];
+
+  const steps = [
+    {n:"1",title:"Daftar Akun",desc:"Buat akun gratis hanya dalam 30 detik"},
+    {n:"2",title:"Pilih Layanan",desc:"Browse ratusan layanan digital tersedia"},
+    {n:"3",title:"Bayar & Kirim Target",desc:"Transfer & kirim link/akun yang ingin ditingkatkan"},
+    {n:"4",title:"Pesanan Diproses",desc:"Admin kami segera memproses pesananmu"},
+  ];
+
+  const faqs = [
+    {q:"Apakah layanan ini aman?", a:"Ya, semua layanan kami telah diuji dan terbukti aman. Tidak ada risiko banned selama mengikuti panduan penggunaan."},
+    {q:"Berapa lama proses pengerjaan?", a:"Tergantung layanan, rata-rata 1-24 jam setelah pembayaran dikonfirmasi."},
+    {q:"Bagaimana cara pembayaran?", a:"Kami menerima transfer bank (BCA, BNI, BRI, Mandiri) dan e-wallet (DANA, OVO, GoPay, ShopeePay)."},
+    {q:"Apakah ada garansi?", a:"Ya! Jika pesanan tidak selesai sesuai target, saldo akan dikembalikan ke wallet akun kamu."},
+    {q:"Bisa daftar pakai Google?", a:"Bisa! Klik tombol 'Daftar dengan Google' untuk registrasi instan tanpa perlu password."},
+  ];
+
+  return (
+    <div style={{minHeight:"100vh",background:"#fafafa",fontFamily:"'DM Sans',sans-serif"}}>
+      <style>{STYLES}</style>
+
+      {/* NAVBAR */}
+      <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 5%",height:64,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 8px rgba(0,0,0,0.04)"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {ss.logo_url ? <img src={ss.logo_url} alt="logo" style={{height:36,borderRadius:8}} /> : null}
+          <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20}}>
+            {(ss.site_name||"tukangmedia").replace(/\s/g,"").toLowerCase().includes("tukang")
+              ? <>{(ss.site_name||"tukangmedia").split(/(?=media|digital)/i)[0]}<span style={{color:primary}}>{(ss.site_name||"tukangmedia").replace(/^[^m]*(media|digital)/i,m=>m.replace(/^[^m]*/i,""))|| "media"}</span></>
+              : <span>{ss.site_name||"tukangmedia"}</span>}
+          </div>
+        </div>
+        <div style={{display:"flex",gap:10,alignItems:"center"}}>
+          <button onClick={onLogin} style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:10,padding:"8px 18px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"#18181b"}}>Masuk</button>
+          <button onClick={onRegister} style={{background:primary,color:"white",border:"none",borderRadius:10,padding:"8px 20px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Daftar Gratis</button>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <div style={{background:`linear-gradient(135deg, ${primary}15 0%, white 50%, ${primary}08 100%)`,padding:"80px 5% 60px",textAlign:"center"}}>
+        <div style={{display:"inline-block",background:primary+"20",color:primary,borderRadius:20,padding:"5px 16px",fontSize:12,fontWeight:700,letterSpacing:1,marginBottom:20,textTransform:"uppercase"}}>
+          {ss.hero_badge||"Platform Digital Terpercaya"}
+        </div>
+        <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(28px,5vw,52px)",fontWeight:400,lineHeight:1.15,marginBottom:16,maxWidth:800,margin:"0 auto 16px"}}>
+          {ss.hero_title||"Tools & template kreator"}
+          <br/><em style={{color:"#71717a"}}>{ss.hero_subtitle||"semua platform, satu tempat."}</em>
+        </h1>
+        <p style={{fontSize:16,color:"#71717a",maxWidth:520,margin:"0 auto 32px",lineHeight:1.7}}>
+          {ss.tagline||"Platform digital terlengkap untuk kebutuhan sosial media, top up, dan layanan digital kamu."}
+        </p>
+        <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
+          <button onClick={onRegister} style={{background:primary,color:"white",border:"none",borderRadius:12,padding:"14px 32px",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:`0 4px 20px ${primary}40`}}>
+            🚀 Mulai Gratis Sekarang
+          </button>
+          <button onClick={onLogin} style={{background:"white",color:"#18181b",border:"1.5px solid #e4e4e7",borderRadius:12,padding:"14px 28px",fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+            Masuk ke Akun →
+          </button>
+        </div>
+
+        {/* STATS */}
+        {ss.show_stats!==false && (
+          <div style={{display:"flex",gap:0,justifyContent:"center",marginTop:48,flexWrap:"wrap"}}>
+            {[
+              {v:ss.stats_produk||"24+",l:"Layanan Tersedia"},
+              {v:ss.stats_platform||"9",l:"Platform Didukung"},
+              {v:ss.stats_transaksi||"100+",l:"Transaksi Selesai"},
+              {v:"24/7",l:"Support Online"},
+            ].map((s,i,arr) => (
+              <div key={s.l} style={{textAlign:"center",padding:"20px 32px",borderRight:i<arr.length-1?"1px solid #e4e4e7":"none"}}>
+                <div style={{fontFamily:"'DM Serif Display',serif",fontSize:32,color:primary,fontWeight:700}}>{s.v}</div>
+                <div style={{fontSize:12,color:"#71717a",marginTop:4,fontWeight:500}}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* FEATURES */}
+      <div style={{padding:"60px 5%",background:"white"}}>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <div style={{fontSize:11,fontWeight:700,color:primary,letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>Keunggulan Kami</div>
+          <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(22px,3vw,34px)",fontWeight:400}}>Kenapa Harus Pilih Kami?</h2>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:20,maxWidth:1100,margin:"0 auto"}}>
+          {features.map(f => (
+            <div key={f.title} style={{background:"#f8fafc",borderRadius:16,padding:24,border:"1.5px solid #f0f0f0",transition:"all 0.2s"}}
+              onMouseOver={e=>{e.currentTarget.style.borderColor=primary;e.currentTarget.style.background="white"}}
+              onMouseOut={e=>{e.currentTarget.style.borderColor="#f0f0f0";e.currentTarget.style.background="#f8fafc"}}>
+              <div style={{fontSize:32,marginBottom:12}}>{f.icon}</div>
+              <div style={{fontWeight:700,fontSize:15,marginBottom:6}}>{f.title}</div>
+              <div style={{fontSize:13,color:"#71717a",lineHeight:1.6}}>{f.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* HOW IT WORKS */}
+      <div style={{padding:"60px 5%",background:`linear-gradient(135deg, ${primary}08, #fafafa)`}}>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          <div style={{fontSize:11,fontWeight:700,color:primary,letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>Cara Kerja</div>
+          <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(22px,3vw,34px)",fontWeight:400}}>Mudah dalam 4 Langkah</h2>
+        </div>
+        <div style={{display:"flex",gap:0,maxWidth:900,margin:"0 auto",flexWrap:"wrap",justifyContent:"center"}}>
+          {steps.map((s,i) => (
+            <div key={s.n} style={{flex:"1 1 200px",textAlign:"center",padding:"20px 16px",position:"relative"}}>
+              <div style={{width:56,height:56,borderRadius:"50%",background:primary,color:"white",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'DM Serif Display',serif",fontSize:22,fontWeight:700,margin:"0 auto 16px",boxShadow:`0 4px 16px ${primary}40`}}>
+                {s.n}
+              </div>
+              {i<steps.length-1 && <div style={{position:"absolute",top:48,left:"60%",width:"80%",height:2,background:`linear-gradient(to right,${primary},${primary}40)`,display:"none"}} className="step-line" />}
+              <div style={{fontWeight:700,fontSize:14,marginBottom:6}}>{s.title}</div>
+              <div style={{fontSize:12,color:"#71717a",lineHeight:1.6}}>{s.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* TESTIMONI */}
+      {ss.show_testimoni!==false && (() => {
+        try {
+          const testimoni = JSON.parse(ss.testimoni||"[]");
+          if (testimoni.length===0) return null;
+          return (
+            <div style={{padding:"60px 5%",background:"white"}}>
+              <div style={{textAlign:"center",marginBottom:40}}>
+                <div style={{fontSize:11,fontWeight:700,color:primary,letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>Testimoni</div>
+                <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(22px,3vw,34px)",fontWeight:400}}>Apa Kata Mereka?</h2>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:16,maxWidth:1100,margin:"0 auto"}}>
+                {testimoni.map((t,i) => (
+                  <div key={i} style={{background:"#f8fafc",borderRadius:16,padding:20,border:"1.5px solid #f0f0f0"}}>
+                    <div style={{color:"#f59e0b",fontSize:16,marginBottom:8}}>{"★".repeat(t.bintang||5)}</div>
+                    <div style={{fontSize:13,color:"#52525b",lineHeight:1.6,marginBottom:12}}>"{t.teks}"</div>
+                    <div style={{fontWeight:700,fontSize:13}}>— {t.nama}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        } catch { return null; }
+      })()}
+
+      {/* FAQ */}
+      {ss.show_faq!==false && (() => {
+        try {
+          const faqList = JSON.parse(ss.faq||"[]");
+          const allFaqs = [...faqs, ...faqList];
+          return (
+            <div style={{padding:"60px 5%",background:"#f8fafc"}}>
+              <div style={{textAlign:"center",marginBottom:40}}>
+                <div style={{fontSize:11,fontWeight:700,color:primary,letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>FAQ</div>
+                <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(22px,3vw,34px)",fontWeight:400}}>Pertanyaan Umum</h2>
+              </div>
+              <div style={{maxWidth:720,margin:"0 auto",display:"flex",flexDirection:"column",gap:10}}>
+                {allFaqs.map((f,i) => (
+                  <div key={i} onClick={()=>setFaqOpen(faqOpen===i?null:i)}
+                    style={{background:"white",borderRadius:12,border:"1.5px solid "+(faqOpen===i?primary:"#e4e4e7"),overflow:"hidden",cursor:"pointer",transition:"all 0.2s"}}>
+                    <div style={{padding:"14px 18px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                      <div style={{fontWeight:600,fontSize:14,color:faqOpen===i?primary:"#18181b"}}>{f.q}</div>
+                      <div style={{color:primary,fontSize:18,flexShrink:0,marginLeft:12,transition:"transform 0.2s",transform:faqOpen===i?"rotate(45deg)":"rotate(0deg)"}}>+</div>
+                    </div>
+                    {faqOpen===i && <div style={{padding:"0 18px 16px",fontSize:13,color:"#52525b",lineHeight:1.7,borderTop:"1px solid #f4f4f5"}}>{f.a}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        } catch { return null; }
+      })()}
+
+      {/* CTA BOTTOM */}
+      <div style={{background:`linear-gradient(135deg,${primary},${primary}cc)`,padding:"60px 5%",textAlign:"center",color:"white"}}>
+        <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(24px,4vw,40px)",fontWeight:400,marginBottom:12}}>
+          Siap Mulai Sekarang?
+        </h2>
+        <p style={{fontSize:15,opacity:0.85,marginBottom:32,maxWidth:480,margin:"0 auto 32px"}}>
+          Bergabung bersama ribuan pengguna yang sudah merasakan manfaatnya. Gratis daftar, langsung bisa order!
+        </p>
+        <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap"}}>
+          <button onClick={onRegister} style={{background:"white",color:primary,border:"none",borderRadius:12,padding:"14px 32px",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px rgba(0,0,0,0.15)"}}>
+            🚀 Daftar Gratis Sekarang
+          </button>
+          <button onClick={onLogin} style={{background:"transparent",color:"white",border:"2px solid rgba(255,255,255,0.5)",borderRadius:12,padding:"14px 28px",fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+            Sudah punya akun? Masuk →
+          </button>
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <div style={{background:"#18181b",color:"#a1a1aa",textAlign:"center",padding:"20px",fontSize:12}}>
+        {ss.footer_text||"© 2025 tukangmedia. All rights reserved."}
+      </div>
+    </div>
+  );
+}
+
 // ============================================================
 // APP ROOT
 // ============================================================
@@ -2596,6 +2806,13 @@ export default function App() {
   const [role, setRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(true);
   const [authReady, setAuthReady] = useState(false);
+  const [siteSettings, setSiteSettings] = useState({});
+
+  useEffect(() => {
+    supabase.from("site_settings").select("*").maybeSingle().then(({data}) => {
+      if (data) setSiteSettings(data);
+    });
+  }, []);
 
   // Halaman yang butuh login — home & auth bebas diakses siapapun
   const protectedPages = ["owner", "admin", "buyer"];
@@ -2670,10 +2887,14 @@ export default function App() {
   if (!authReady) return loadingScreen;
   if (loadingRole && user) return loadingScreen;
 
-  if (page==="auth") return <AuthPage onBack={() => goTo("home")} />;
-  if (page==="owner" && role==="owner") return <OwnerDashboard user={user} onBack={() => goTo("home")} />;
-  if (page==="admin" && role==="admin") return <AdminDashboard user={user} onBack={() => goTo("home")} />;
-  if (page==="buyer") return <BuyerDashboard user={user} onBack={() => goTo("home")} />;
+  if (page==="auth") return <AuthPage onBack={() => goTo(user?"marketplace":"home")} />;
+  if (page==="owner" && role==="owner") return <OwnerDashboard user={user} onBack={() => goTo("marketplace")} />;
+  if (page==="admin" && role==="admin") return <AdminDashboard user={user} onBack={() => goTo("marketplace")} />;
+  if (page==="buyer") return <BuyerDashboard user={user} onBack={() => goTo("marketplace")} />;
+  if (page==="marketplace") return <MarketplaceListing user={user} role={role} onLogin={() => goTo("auth")} onDashboard={handleDashboard} />;
+
+  // Landing page untuk user yang belum login
+  if (!user) return <LandingPage siteSettings={siteSettings} onLogin={() => goTo("auth")} onRegister={() => { goTo("auth"); }} />;
 
   return <MarketplaceListing user={user} role={role} onLogin={() => goTo("auth")} onDashboard={handleDashboard} />;
 }
