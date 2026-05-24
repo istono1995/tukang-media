@@ -259,6 +259,19 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
   const [walletBalance, setWalletBalance] = useState(0);
   const [useWallet, setUseWallet] = useState(false);
 
+  const PAYMENT_LOGOS = {
+    bca:     "https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg",
+    bni:     "https://upload.wikimedia.org/wikipedia/id/5/55/BNI_logo.svg",
+    bri:     "https://upload.wikimedia.org/wikipedia/commons/6/68/BANK_BRI_logo.svg",
+    mandiri: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg",
+    bsi:     "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Bank_Syariah_Indonesia.svg/320px-Bank_Syariah_Indonesia.svg.png",
+    dana:    "https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg",
+    ovo:     "https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg",
+    gopay:   "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/320px-Gopay_logo.svg.png",
+    shopeepay:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Shopee.svg/320px-Shopee.svg.png",
+    linkaja: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/LinkAja.svg/320px-LinkAja.svg.png",
+    qris:    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_QRIS.svg/320px-Logo_QRIS.svg.png",
+  };
   const PAYMENT_TYPES_MAP = {
     bca:"🏦", bni:"🏛️", bri:"🏢", mandiri:"🏦", bsi:"🕌",
     qris:"⬛", dana:"💙", ovo:"💜", gopay:"💚", shopeepay:"🧡", linkaja:"❤️"
@@ -443,7 +456,12 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
                           return (
                             <div key={pm.id} onClick={()=>setSelectedPay(pm.id)}
                               style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,border:"2px solid "+(isSelected?"#18181b":"#e4e4e7"),background:isSelected?"#fafafa":"white",cursor:"pointer",transition:"all 0.15s"}}>
-                              <div style={{width:36,height:36,borderRadius:9,background:"#f4f4f5",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>{icon}</div>
+                              <div style={{width:44,height:44,borderRadius:9,background:"white",border:"1px solid #e4e4e7",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden",padding:4}}>
+                                {PAYMENT_LOGOS[pm.method_name]
+                                  ? <img src={PAYMENT_LOGOS[pm.method_name]} alt={pm.bank_name} style={{width:"100%",height:"100%",objectFit:"contain"}} onError={e=>{e.target.style.display="none";e.target.nextSibling.style.display="flex";}} />
+                                  : null}
+                                <span style={{fontSize:20,display:PAYMENT_LOGOS[pm.method_name]?"none":"flex"}}>{icon}</span>
+                              </div>
                               <div style={{flex:1}}>
                                 <div style={{fontWeight:600,fontSize:13}}>{pm.bank_name}</div>
                                 {pm.account_number && <div style={{fontSize:12,color:"#71717a",fontFamily:"monospace"}}>{pm.account_number} · {pm.holder_name}</div>}
