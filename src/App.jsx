@@ -88,6 +88,8 @@ body{
   font-family:'DM Sans',sans-serif;
   background:#0f0f23;
   min-height:100vh;
+  width:100%;
+  overflow-x:hidden;
 }
 #animated-bg{
   position:fixed;
@@ -127,7 +129,9 @@ body{
   100%{opacity:1;transform:scale(1.1)}
 }
 #root{position:relative;z-index:1;background:transparent;}
-html,body,#root{min-height:100vh;}
+html,body,#root{min-height:100vh;width:100%;}
+/* Remove the apparent side borders */
+.page-wrapper{width:100%;background:transparent;overflow-x:hidden;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
@@ -601,7 +605,7 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   const getFaq = () => { try { return JSON.parse(ss.faq||"[]"); } catch { return []; } };
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit",width:"100%",overflowX:"hidden"}}>
       <style>{STYLES}</style>
       {/* ANNOUNCEMENT BAR */}
       {ss.announcement_active && ss.announcement && (
@@ -611,7 +615,7 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
       )}
       <Navbar user={user} role={role} onLogin={onLogin} onDashboard={onDashboard} cart={cart} setCart={setCart} siteSettings={siteSettings} onHome={()=>window.scrollTo({top:0,behavior:"smooth"})} />
 
-      <div style={{maxWidth:1160,margin:"0 auto",padding:"24px 20px 60px"}}>
+      <div style={{maxWidth:1160,margin:"0 auto",padding:"24px 20px 60px",width:"100%"}}>
         <div style={{marginBottom:24}}>
           <p style={{fontSize:11.5,fontWeight:700,letterSpacing:1.5,color:ss.primary_color||"#60a5fa",textTransform:"uppercase",marginBottom:5}}>{ss.hero_badge||"Marketplace Digital"}</p>
           <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:34,fontWeight:400,lineHeight:1.15,letterSpacing:-0.8,color:"white",textShadow:"0 2px 20px rgba(0,0,0,0.3)"}}>
@@ -852,7 +856,7 @@ function AuthPage({ onBack }) {
   );
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit",width:"100%",overflowX:"hidden"}}>
       <style>{STYLES}</style>
       <nav style={{background:"rgba(255,255,255,0.9)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.15)",padding:"0 28px",height:58,display:"flex",alignItems:"center",gap:12,position:"sticky",top:0}}>
         <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#52525b"}}>←</button>
@@ -1649,7 +1653,7 @@ function OwnerDashboard({ user, onBack }) {
   const paidOrders = orders.filter(o=>paidStatuses.includes(o.status)).length;
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit",width:"100%",overflowX:"hidden"}}>
       <style>{STYLES}</style>
       <nav style={{background:"#18181b",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -1994,7 +1998,7 @@ function AdminDashboard({ user, onBack }) {
   };
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit",width:"100%",overflowX:"hidden"}}>
       <style>{STYLES}</style>
       <nav style={{background:"#1e3a5f",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -2574,7 +2578,7 @@ function BuyerDashboard({ user, onBack }) {
   const groups = getGroups();
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit",width:"100%",overflowX:"hidden"}}>
       <style>{STYLES}</style>
       <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
