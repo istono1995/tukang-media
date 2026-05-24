@@ -753,7 +753,7 @@ function AuthPage({ onBack }) {
               )}
               <div>
                 <label style={{fontSize:13,fontWeight:600,display:"block",marginBottom:6}}>Email</label>
-                <input className="ainput" type="email" placeholder="email@kamu.com" value={form.email} onChange={e=>set("email",e.target.value)} />
+                <input className="ainput" type="email" placeholder="email@kamu.com" value={form.email} onChange={e=>set("email",e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} />
               </div>
               {mode!=="forgot" && (
                 <div>
@@ -762,7 +762,7 @@ function AuthPage({ onBack }) {
                     {mode==="login" && <button onClick={()=>setMode("forgot")} style={{background:"none",border:"none",color:"#2563eb",fontSize:12,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Lupa password?</button>}
                   </div>
                   <div style={{position:"relative"}}>
-                    <input className="ainput" type={showPass?"text":"password"} placeholder="Masukkan password" value={form.password} onChange={e=>set("password",e.target.value)} style={{paddingRight:44}} />
+                    <input className="ainput" type={showPass?"text":"password"} placeholder="Masukkan password" value={form.password} onChange={e=>set("password",e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} style={{paddingRight:44}} />
                     <button onClick={()=>setShowPass(s=>!s)} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",fontSize:16,color:"#a1a1aa"}}>{showPass?"🙈":"👁️"}</button>
                   </div>
                 </div>
