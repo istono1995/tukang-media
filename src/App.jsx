@@ -1936,8 +1936,8 @@ function OwnerDashboard({ user, onBack }) {
                 orders.slice(0,5).map(o => (
                   <div key={o.id} style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid #f4f4f5",fontSize:13}}>
                     <span>{o.user_email?.split("@")[0]}</span>
-                    <span style={{background:o.status==="paid"?"#f0fdf4":o.status==="cancelled"?"#fef2f2":"#fffbeb",color:o.status==="paid"?"#16a34a":o.status==="cancelled"?"#dc2626":"#b45309",borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>
-                      {o.status==="paid"?"✓ Lunas":o.status==="cancelled"?"❌ Batal":"⏳ Pending"}
+                    <span style={{background:{pending:"#fffbeb",paid:"#eff6ff",processing:"#fdf4ff",done:"#f0fdf4",cancelled:"#fef2f2"}[o.status]||"#fffbeb",color:{pending:"#b45309",paid:"#2563eb",processing:"#7c3aed",done:"#16a34a",cancelled:"#dc2626"}[o.status]||"#b45309",borderRadius:6,padding:"2px 8px",fontSize:11,fontWeight:600}}>
+                      {{pending:"⏳ Pending",paid:"🔵 Bayar",processing:"⚙️ Proses",done:"✅ Selesai",cancelled:"❌ Batal"}[o.status]||"⏳ Pending"}
                     </span>
                   </div>
                 ))}
