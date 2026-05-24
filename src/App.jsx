@@ -61,6 +61,15 @@ const platforms = [
   { id: "lainnya",   label: "Lainnya",        color: "#71717a", bg: "#f4f4f5", border: "#d4d4d8" },
 ];
 
+const platformGroups = [
+  { id: "all",      label: "Semua Platform", icon: "🌐", platforms: null },
+  { id: "sosmed",   label: "Sosial Media",   icon: "📱", platforms: ["youtube","instagram","tiktok","facebook","telegram","whatsapp","twitter","threads","shopee"] },
+  { id: "game",     label: "Top Up Game",    icon: "🎮", platforms: ["mlbb","pubg","freefire","valorant","topupgame"] },
+  { id: "pulsa",    label: "Pulsa & Token",  icon: "⚡", platforms: ["pulsa","listrik","emoney"] },
+  { id: "akun",     label: "Akun & Premium", icon: "👑", platforms: ["netflix","spotify","steam","akun"] },
+  { id: "lainnya",  label: "Lainnya",        icon: "📦", platforms: ["lainnya"] },
+];
+
 const tagColors = { Terlaris:"#18181b", Baru:"#2563eb", Populer:"#7c3aed", Diskon:"#dc2626", Premium:"#b45309" };
 const formatRp = (n) => "Rp " + parseInt(n||0).toLocaleString("id-ID");
 const StarRow = ({ rating }) => {
@@ -482,6 +491,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
 // ============================================================
 function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   const [activePlatform, setActivePlatform] = useState("all");
+  const [activeGroup, setActiveGroup] = useState("all");
   const [sortBy, setSortBy] = useState("terbaru");
   const [search, setSearch] = useState("");
   const [wishlist, setWishlist] = useState([]);
@@ -522,7 +532,9 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   };
 
   const currentPlat = platforms.find(p => p.id===activePlatform);
+  const groupPlatforms = platformGroups.find(g=>g.id===activeGroup)?.platforms;
   const filtered = products
+    .filter(p => activeGroup==="all" || !groupPlatforms || groupPlatforms.includes(p.platform))
     .filter(p => activePlatform==="all" || p.platform===activePlatform)
     .filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()) || p.description?.toLowerCase().includes(search.toLowerCase()))
     .sort((a,b) => sortBy==="harga-asc"?a.price-b.price:sortBy==="harga-desc"?b.price-a.price:sortBy==="rating"?(b.rating||0)-(a.rating||0):new Date(b.created_at)-new Date(a.created_at));
@@ -550,14 +562,29 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
           </h1>
         </div>
 
-        <div className="pscroll">
-          <button className={"platform-tab"+(activePlatform==="all"?" active":"")} style={activePlatform==="all"?{background:"#18181b"}:{}} onClick={() => setActivePlatform("all")}>🌐 Semua Platform</button>
-          {platforms.map(p => (
-            <button key={p.id} className={"platform-tab"+(activePlatform===p.id?" active":"")} style={activePlatform===p.id?{background:p.color}:{}} onClick={() => setActivePlatform(p.id)}>
-              <PlatformIcon id={p.id} size={16} />{p.label}
+        {/* GROUP TABS */}
+        <div className="pscroll" style={{marginBottom:10}}>
+          {platformGroups.map(g => (
+            <button key={g.id} onClick={()=>{setActiveGroup(g.id);setActivePlatform("all");}}
+              className={"platform-tab"+(activeGroup===g.id?" active":"")}
+              style={activeGroup===g.id?{background:"#18181b",color:"white"}:{}}>
+              {g.icon} {g.label}
             </button>
           ))}
         </div>
+
+        {/* PLATFORM TABS - filtered by group */}
+        {activeGroup !== "all" && (
+          <div className="pscroll">
+            {platforms.filter(p => platformGroups.find(g=>g.id===activeGroup)?.platforms?.includes(p.id)).map(p => (
+              <button key={p.id} className={"platform-tab"+(activePlatform===p.id?" active":"")}
+                style={activePlatform===p.id?{background:p.color,color:"white",borderColor:p.color}:{}}
+                onClick={() => setActivePlatform(activePlatform===p.id?"all":p.id)}>
+                <PlatformIcon id={p.id} size={16} />{p.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {ss.show_stats!==false && (
         <div style={{display:"flex",gap:14,marginBottom:24,flexWrap:"wrap"}}>
