@@ -900,8 +900,13 @@ function ProductForm({ editData, onSave, onCancel, saving }) {
   const [form, setForm] = useState(editData || {name:"",platform:"youtube",price:"",description:"",tag:"",download_url:""});
   const set = (k,v) => setForm(f=>({...f,[k]:v}));
   return (
-    <div style={{background:"white",border:"1.5px solid #e4e4e7",borderRadius:14,padding:22,marginBottom:20}}>
-      <div style={{fontWeight:700,fontSize:14,marginBottom:16}}>{editData?"✏️ Edit Produk":"📝 Tambah Produk Baru"}</div>
+    <div style={{position:"fixed",inset:0,zIndex:500,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onCancel}>
+      <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)"}} />
+      <div style={{position:"relative",background:"white",borderRadius:16,padding:24,width:"90%",maxWidth:560,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 24px 60px rgba(0,0,0,0.2)"}} onClick={e=>e.stopPropagation()}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div style={{fontWeight:700,fontSize:15}}>{editData?"✏️ Edit Produk":"📝 Tambah Produk Baru"}</div>
+        <button onClick={onCancel} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#71717a",lineHeight:1}}>×</button>
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
         <div>
           <label style={{fontSize:12,fontWeight:600,display:"block",marginBottom:5}}>Nama Produk *</label>
