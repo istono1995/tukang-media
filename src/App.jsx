@@ -15,19 +15,50 @@ const PlatformIcon = ({ id, size = 18 }) => {
   if (id === "threads") return <svg style={s} viewBox="0 0 192 192" fill="#000"><path d="M141.537 88.988a66 66 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.229c8.249.053 14.474 2.452 18.503 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 6.987 4.678 15.994 6.95 25.393 6.435 12.374-.688 22.058-5.394 28.774-13.99 5.1-6.549 8.317-15.017 9.697-25.67 5.818 3.512 10.126 8.131 12.552 13.683 4.366 9.953 4.631 26.308-9.003 39.367-11.977 11.432-26.389 16.376-48.177 16.537-24.142-.179-42.496-7.917-54.558-23-11.366-14.187-17.222-34.645-17.412-60.812.19-26.167 6.046-46.625 17.412-60.812 12.062-15.083 30.416-22.82 54.558-23 24.293.18 42.935 7.953 55.437 23.11 6.134 7.4 10.76 16.638 13.765 27.375l16.112-4.283c-3.612-13.194-9.392-24.55-17.286-33.878C128.553 10.585 105.621.5 79.02.5h-.125C52.302.5 29.664 10.545 14.628 29.978 1.056 47.6-5.928 72.514-6.148 96.5c.22 23.986 7.204 48.9 20.776 66.522C29.664 182.455 52.302 192.5 79.02 192.5h.125c23.365-.16 39.647-6.288 53.382-19.44 17.994-17.181 17.406-38.713 11.505-51.925-4.21-9.598-12.222-17.44-23.496-22.147zm-41.69 39.249c-10.463.588-21.297-4.108-21.83-14.18-.397-7.439 5.276-15.733 22.462-16.734 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.37 1.765-1.978 24.645-13.754 28.733-23.793 29.318z"/></svg>;
   if (id === "telegram") return <svg style={s} viewBox="0 0 24 24" fill="#2AABEE"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>;
   if (id === "whatsapp") return <svg style={s} viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>;
+  // New platforms
+  if (id === "mlbb") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🎮</span>;
+  if (id === "pubg") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🔫</span>;
+  if (id === "freefire") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🔥</span>;
+  if (id === "valorant") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🎯</span>;
+  if (id === "topupgame") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🎮</span>;
+  if (id === "pulsa") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>📱</span>;
+  if (id === "listrik") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>⚡</span>;
+  if (id === "emoney") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>💳</span>;
+  if (id === "akun") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>👤</span>;
+  if (id === "netflix") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🎬</span>;
+  if (id === "spotify") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🎵</span>;
+  if (id === "steam") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🕹️</span>;
+  if (id === "lainnya") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>📦</span>;
   return <span style={{ fontSize: size * 0.8 }}>🌐</span>;
 };
 
 const platforms = [
-  { id: "youtube",   label: "YouTube",   color: "#FF0000", bg: "#fff1f1", border: "#fecaca" },
-  { id: "instagram", label: "Instagram", color: "#E1306C", bg: "#fdf2f8", border: "#f9a8d4" },
-  { id: "tiktok",    label: "TikTok",    color: "#010101", bg: "#f4f4f5", border: "#d4d4d8" },
-  { id: "facebook",  label: "Facebook",  color: "#1877F2", bg: "#eff6ff", border: "#bfdbfe" },
-  { id: "shopee",    label: "Shopee",    color: "#EE4D2D", bg: "#fff7ed", border: "#fed7aa" },
-  { id: "twitter",   label: "Twitter/X", color: "#000000", bg: "#f4f4f5", border: "#d4d4d8" },
-  { id: "threads",   label: "Threads",   color: "#000000", bg: "#f4f4f5", border: "#d4d4d8" },
-  { id: "telegram",  label: "Telegram",  color: "#2AABEE", bg: "#eff9ff", border: "#bae6fd" },
-  { id: "whatsapp",  label: "WhatsApp",  color: "#25D366", bg: "#f0fdf4", border: "#bbf7d0" },
+  // Sosmed
+  { id: "youtube",   label: "YouTube",      color: "#FF0000", bg: "#fff1f1", border: "#fecaca" },
+  { id: "instagram", label: "Instagram",    color: "#E1306C", bg: "#fdf2f8", border: "#f9a8d4" },
+  { id: "tiktok",    label: "TikTok",       color: "#010101", bg: "#f4f4f5", border: "#d4d4d8" },
+  { id: "facebook",  label: "Facebook",     color: "#1877F2", bg: "#eff6ff", border: "#bfdbfe" },
+  { id: "telegram",  label: "Telegram",     color: "#2AABEE", bg: "#eff9ff", border: "#bae6fd" },
+  { id: "whatsapp",  label: "WhatsApp",     color: "#25D366", bg: "#f0fdf4", border: "#bbf7d0" },
+  { id: "twitter",   label: "Twitter/X",    color: "#000000", bg: "#f4f4f5", border: "#d4d4d8" },
+  { id: "threads",   label: "Threads",      color: "#000000", bg: "#f4f4f5", border: "#d4d4d8" },
+  { id: "shopee",    label: "Shopee",       color: "#EE4D2D", bg: "#fff7ed", border: "#fed7aa" },
+  // Top Up Game
+  { id: "mlbb",      label: "Mobile Legends", color: "#1c6fc5", bg: "#eff6ff", border: "#bfdbfe" },
+  { id: "pubg",      label: "PUBG Mobile",    color: "#f5a623", bg: "#fffbeb", border: "#fde68a" },
+  { id: "freefire",  label: "Free Fire",      color: "#e63946", bg: "#fff1f1", border: "#fecaca" },
+  { id: "valorant",  label: "Valorant",       color: "#ff4655", bg: "#fff1f1", border: "#fecaca" },
+  { id: "topupgame", label: "Game Lainnya",   color: "#7c3aed", bg: "#fdf4ff", border: "#e9d5ff" },
+  // Pulsa & Token
+  { id: "pulsa",     label: "Pulsa/Data",     color: "#0891b2", bg: "#ecfeff", border: "#a5f3fc" },
+  { id: "listrik",   label: "Token Listrik",  color: "#f59e0b", bg: "#fffbeb", border: "#fde68a" },
+  { id: "emoney",    label: "E-Money/Top Up", color: "#10b981", bg: "#f0fdf4", border: "#bbf7d0" },
+  // Akun & Streaming
+  { id: "netflix",   label: "Netflix",        color: "#e50914", bg: "#fff1f1", border: "#fecaca" },
+  { id: "spotify",   label: "Spotify",        color: "#1db954", bg: "#f0fdf4", border: "#bbf7d0" },
+  { id: "steam",     label: "Steam/Gaming",   color: "#1b2838", bg: "#f4f4f5", border: "#d4d4d8" },
+  { id: "akun",      label: "Akun Premium",   color: "#6366f1", bg: "#eef2ff", border: "#c7d2fe" },
+  { id: "lainnya",   label: "Lainnya",        color: "#71717a", bg: "#f4f4f5", border: "#d4d4d8" },
 ];
 
 const tagColors = { Terlaris:"#18181b", Baru:"#2563eb", Populer:"#7c3aed", Diskon:"#dc2626", Premium:"#b45309" };
