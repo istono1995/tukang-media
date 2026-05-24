@@ -2822,12 +2822,12 @@ function BuyerDashboard({ user, onBack }) {
   return (
     <div style={{minHeight:"100vh",background:"transparent",color:"inherit",width:"100%",overflowX:"hidden"}}>
       <style>{STYLES}</style>
-      <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
+      <nav style={{background:"rgba(255,255,255,0.92)",backdropFilter:"blur(20px)",borderBottom:"1px solid rgba(0,0,0,0.08)",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10,color:"#18181b"}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
-          <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"rgba(255,255,255,0.75)"}}>←</button>
-          <div style={{fontFamily:"'DM Serif Display',serif",fontSize:18}}>tukang<span style={{color:"#2563eb"}}>media</span></div>
+          <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#18181b"}}>←</button>
+          <div style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:"#18181b"}}>tukang<span style={{color:"#2563eb"}}>media</span></div>
         </div>
-        <div style={{fontSize:12,color:"#71717a"}}>{user.email}</div>
+        <div style={{fontSize:12,color:"#52525b",fontWeight:500}}>{user.email}</div>
       </nav>
 
       <div style={{maxWidth:700,margin:"0 auto",padding:"28px 20px 60px"}}>
