@@ -2182,17 +2182,20 @@ function BuyerLinkInput({ groupOrders }) {
 // ============================================================
 // ORDER CHAT COMPONENT (shared buyer & admin)
 // ============================================================
-function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus }) {
+function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus, onClose }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [uploadingImg, setUploadingImg] = useState(false);
+  const [previewImg, setPreviewImg] = useState(null); // {url, file, caption}
+  const [caption, setCaption] = useState("");
+  const [closed, setClosed] = useState(orderStatus==="done" && !isAdmin);
   const bottomRef = useRef(null);
   const prevCountRef = useRef(0);
   const fileRef = useRef(null);
 
-  const isDone = orderStatus === "done";
-  const canSend = isAdmin || !isDone; // buyer tidak bisa chat kalau done
+  const isDone = orderStatus==="done";
+  const canSend = isAdmin ? true : !isDone && !closed;
 
   useEffect(() => {
     fetchMessages();
@@ -2216,54 +2219,97 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus }) {
   };
 
   const sendMessage = async (msgText, imageUrl) => {
-    const finalMsg = msgText || text.trim();
+    const finalMsg = msgText !== undefined ? msgText : text.trim();
     if (!finalMsg && !imageUrl) return;
     setSending(true);
+    const msgContent = imageUrl
+      ? (caption ? `[img]${imageUrl}||caption:${caption}` : `[img]${imageUrl}`)
+      : finalMsg;
     await supabase.from("order_messages").insert([{
       room_code: orderId,
       sender_email: currentEmail,
-      message: imageUrl ? `[img]${imageUrl}` : finalMsg,
+      message: msgContent,
       is_admin: isAdmin,
     }]);
-    setText("");
+    setText(""); setCaption("");
     setSending(false);
     fetchMessages();
   };
 
-  const handleImageUpload = async (e) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const url = URL.createObjectURL(file);
+    setPreviewImg({url, file});
+    setCaption("");
+    e.target.value = "";
+  };
+
+  const handleSendImage = async () => {
+    if (!previewImg) return;
     setUploadingImg(true);
-    const path = `chat-${orderId}-${Date.now()}.${file.name.split(".").pop()}`;
+    const file = previewImg.file;
+    const path = `chat-${Date.now()}.${file.name.split(".").pop()}`;
     const { error } = await supabase.storage.from("media").upload(path, file, {upsert:true});
-    if (error) { alert("Gagal upload: "+error.message); setUploadingImg(false); return; }
+    if (error) { alert("Gagal upload foto: "+error.message); setUploadingImg(false); return; }
     const { data: urlData } = supabase.storage.from("media").getPublicUrl(path);
     await sendMessage("", urlData.publicUrl);
+    setPreviewImg(null); setCaption("");
     setUploadingImg(false);
-    e.target.value = "";
+  };
+
+  const handleCloseChat = async () => {
+    if (!window.confirm("Tutup chat ini? Pembeli tidak bisa kirim pesan lagi.")) return;
+    await supabase.from("order_messages").insert([{
+      room_code: orderId,
+      sender_email: currentEmail,
+      message: "[system]Chat ditutup oleh admin. Terima kasih! 🙏",
+      is_admin: true,
+    }]);
+    fetchMessages();
+    if (onClose) onClose();
   };
 
   return (
     <div style={{border:"1.5px solid #e4e4e7",borderRadius:12,overflow:"hidden"}}>
+      {/* Header */}
       <div style={{background:"#f8fafc",padding:"10px 14px",borderBottom:"1px solid #e4e4e7",display:"flex",alignItems:"center",gap:8}}>
         <span style={{fontSize:14}}>💬</span>
         <span style={{fontWeight:700,fontSize:13}}>Chat dengan {isAdmin?"Pembeli":"Admin"}</span>
         {isDone && !isAdmin && <span style={{fontSize:11,background:"#f0fdf4",color:"#16a34a",borderRadius:6,padding:"2px 8px",fontWeight:600}}>✅ Selesai</span>}
         <span style={{fontSize:11,color:"#a1a1aa",marginLeft:"auto"}}>Kode: {orderCode}</span>
+        {isAdmin && !isDone && (
+          <button onClick={handleCloseChat} title="Tutup chat"
+            style={{background:"#fff1f2",color:"#e11d48",border:"1px solid #fecdd3",borderRadius:7,padding:"3px 10px",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginLeft:4}}>
+            ✕ Tutup Chat
+          </button>
+        )}
       </div>
+
+      {/* Messages */}
       <div style={{height:220,overflowY:"auto",padding:12,display:"flex",flexDirection:"column",gap:8,background:"white"}}>
         {messages.length===0 && <div style={{textAlign:"center",color:"#a1a1aa",fontSize:12,margin:"auto"}}>Belum ada pesan.</div>}
         {messages.map(m => {
           const isMine = m.sender_email===currentEmail;
           const isImg = m.message?.startsWith("[img]");
-          const imgUrl = isImg ? m.message.replace("[img]","") : null;
+          const isSystem = m.message?.startsWith("[system]");
+          if (isSystem) return (
+            <div key={m.id} style={{textAlign:"center",fontSize:11,color:"#71717a",padding:"6px 12px",background:"#f8fafc",borderRadius:8,margin:"4px 0"}}>
+              {m.message.replace("[system]","")}
+            </div>
+          );
+          const imgPart = isImg ? m.message.replace("[img]","") : null;
+          const imgUrl = imgPart?.includes("||caption:") ? imgPart.split("||caption:")[0] : imgPart;
+          const imgCaption = imgPart?.includes("||caption:") ? imgPart.split("||caption:")[1] : null;
           return (
             <div key={m.id} style={{display:"flex",flexDirection:"column",alignItems:isMine?"flex-end":"flex-start"}}>
               <div style={{background:isMine?"#18181b":m.is_admin?"#eff6ff":"#f4f4f5",color:isMine?"white":m.is_admin?"#1d4ed8":"#18181b",borderRadius:isMine?"12px 12px 2px 12px":"12px 12px 12px 2px",padding:isImg?"6px":"8px 12px",maxWidth:"80%",fontSize:13,lineHeight:1.5,overflow:"hidden"}}>
-                {isImg
-                  ? <img src={imgUrl} alt="bukti" style={{maxWidth:220,maxHeight:220,borderRadius:8,display:"block",cursor:"pointer"}} onClick={()=>window.open(imgUrl,"_blank")} />
-                  : m.message
-                }
+                {isImg ? (
+                  <div>
+                    <img src={imgUrl} alt="foto" style={{maxWidth:220,maxHeight:220,borderRadius:8,display:"block",cursor:"pointer"}} onClick={()=>window.open(imgUrl,"_blank")} />
+                    {imgCaption && <div style={{fontSize:12,marginTop:6,opacity:0.85}}>{imgCaption}</div>}
+                  </div>
+                ) : m.message}
               </div>
               <div style={{fontSize:10,color:"#a1a1aa",marginTop:2}}>
                 {m.is_admin?"🛡️ Admin":"👤 Pembeli"} · {new Date(m.created_at).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}
@@ -2274,32 +2320,56 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus }) {
         <div ref={bottomRef} />
       </div>
 
+      {/* Image preview popup */}
+      {previewImg && (
+        <div style={{padding:"12px 14px",borderTop:"1px solid #e4e4e7",background:"#f0f9ff"}}>
+          <div style={{fontSize:12,fontWeight:700,color:"#0369a1",marginBottom:8}}>📷 Preview Foto Bukti</div>
+          <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+            <img src={previewImg.url} alt="preview" style={{width:80,height:80,objectFit:"cover",borderRadius:8,border:"1.5px solid #bae6fd",cursor:"pointer"}} onClick={()=>window.open(previewImg.url,"_blank")} />
+            <div style={{flex:1}}>
+              <input value={caption} onChange={e=>setCaption(e.target.value)}
+                placeholder="Tambah keterangan (opsional)... misal: Followers sudah +500"
+                style={{width:"100%",border:"1.5px solid #bae6fd",borderRadius:8,padding:"7px 10px",fontSize:12,fontFamily:"inherit",outline:"none",marginBottom:8}} />
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={handleSendImage} disabled={uploadingImg}
+                  style={{background:"#18181b",color:"white",border:"none",borderRadius:8,padding:"7px 16px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",opacity:uploadingImg?0.6:1}}>
+                  {uploadingImg?"⏳ Mengirim...":"📤 Kirim Foto"}
+                </button>
+                <button onClick={()=>setPreviewImg(null)}
+                  style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:8,padding:"7px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"#71717a"}}>
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Input area */}
-      {canSend ? (
+      {canSend && !previewImg ? (
         <div style={{padding:"10px 12px",borderTop:"1px solid #e4e4e7",background:"#fafafa",display:"flex",gap:8,alignItems:"center"}}>
-          {/* Upload foto - hanya admin/owner */}
           {isAdmin && (
             <>
-              <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImageUpload} />
-              <button onClick={()=>fileRef.current?.click()} disabled={uploadingImg}
-                title="Kirim foto bukti"
-                style={{background:"#f4f4f5",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"7px 10px",fontSize:16,cursor:"pointer",flexShrink:0,opacity:uploadingImg?0.5:1}}>
-                {uploadingImg?"⏳":"📷"}
+              <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFileSelect} />
+              <button onClick={()=>fileRef.current?.click()} title="Kirim foto bukti"
+                style={{background:"#f4f4f5",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"7px 10px",fontSize:16,cursor:"pointer",flexShrink:0}}>
+                📷
               </button>
             </>
           )}
-          <input value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&sendMessage()}
+          <input value={text} onChange={e=>setText(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&sendMessage()}
             placeholder="Tulis pesan..." style={{flex:1,border:"1.5px solid #e4e4e7",borderRadius:9,padding:"8px 12px",fontSize:13,fontFamily:"inherit",outline:"none",background:"white"}} />
           <button onClick={()=>sendMessage()} disabled={sending||!text.trim()}
             style={{background:"#18181b",color:"white",border:"none",borderRadius:9,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",opacity:sending?0.6:1}}>
             Kirim
           </button>
         </div>
-      ) : (
+      ) : !canSend ? (
         <div style={{padding:"12px 16px",borderTop:"1px solid #e4e4e7",background:"#f8fafc",textAlign:"center",fontSize:12,color:"#a1a1aa"}}>
-          ✅ Pesanan selesai — chat sudah ditutup
+          ✅ Chat sudah ditutup
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
