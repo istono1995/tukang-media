@@ -90,7 +90,41 @@ body{
   min-height:100vh;
   width:100%;
   overflow-x:hidden;
+  color:white;
 }
+/* AUTO CONTRAST: white/light bg = dark text */
+div[style*="background:white"],
+div[style*="background: white"],
+div[style*="background:#fff"],
+div[style*="background: #fff"],
+div[style*="background:#fafafa"],
+div[style*="background:#f8fafc"],
+div[style*="background:#f4f4f5"],
+div[style*="background:#fffbeb"],
+div[style*="background:#f0fdf4"],
+div[style*="background:#eff6ff"],
+div[style*="background:#fef2f2"],
+div[style*="background:#fdf4ff"],
+div[style*="background:#f0f9ff"],
+div[style*="background:rgba(255,255,255,0.9"],
+div[style*="background:rgba(255,255,255,0.95"],
+div[style*="background:rgba(255,255,255,0.97"],
+div[style*="background:rgba(255,255,255,1"] {
+  color: #18181b !important;
+}
+/* Override for children of white bg */
+div[style*="background:white"] *,
+div[style*="background:#fff"] *,
+div[style*="background:#fafafa"] *,
+div[style*="background:#f8fafc"] *,
+div[style*="background:rgba(255,255,255,0.9"] *,
+div[style*="background:rgba(255,255,255,0.95"] *,
+div[style*="background:rgba(255,255,255,0.97"] * {
+  color: inherit;
+}
+/* Modals and cards always readable */
+.card { color: #18181b !important; }
+.card * { color: inherit; }
 #animated-bg{
   position:fixed;
   top:0;left:0;right:0;bottom:0;
@@ -348,7 +382,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
           <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(2px)"}} />
 
           {/* SIDEBAR */}
-          <div style={{position:"fixed",right:0,top:0,bottom:0,height:"100dvh",width:"min(460px,100vw)",background:"white",boxShadow:"-8px 0 40px rgba(0,0,0,0.25)",display:"flex",flexDirection:"column",animation:"slideIn 0.25s ease",zIndex:201}}
+          <div style={{position:"fixed",right:0,top:0,bottom:0,height:"100dvh",width:"min(460px,100vw)",background:"white",boxShadow:"-8px 0 40px rgba(0,0,0,0.25)",display:"flex",flexDirection:"column",animation:"slideIn 0.25s ease",zIndex:201,color:"#18181b"}}
             onClick={e=>e.stopPropagation()}>
 
             {/* HEADER */}
@@ -614,7 +648,7 @@ function BuyNowModal({ product, user, onClose, onOrderDone }) {
   return (
     <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
       <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(4px)"}} />
-      <div style={{position:"relative",background:"white",borderRadius:20,width:"90%",maxWidth:440,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 24px 60px rgba(0,0,0,0.3)"}} onClick={e=>e.stopPropagation()}>
+      <div style={{position:"relative",background:"white",borderRadius:20,width:"90%",maxWidth:440,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 24px 60px rgba(0,0,0,0.3)",color:"#18181b"}} onClick={e=>e.stopPropagation()}>
         <div style={{padding:"16px 20px",borderBottom:"1px solid #f0f0f0",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,background:"white"}}>
           <div style={{fontWeight:700,fontSize:15}}>⚡ Beli Langsung</div>
           <button onClick={onClose} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#71717a"}}>✕</button>
@@ -1131,7 +1165,7 @@ function ProductForm({ editData, onSave, onCancel, saving }) {
   return (
     <div style={{position:"fixed",inset:0,zIndex:500,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onCancel}>
       <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)"}} />
-      <div style={{position:"relative",background:"white",borderRadius:16,padding:24,width:"90%",maxWidth:560,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 24px 60px rgba(0,0,0,0.2)"}} onClick={e=>e.stopPropagation()}>
+      <div style={{position:"relative",background:"white",borderRadius:16,padding:24,width:"90%",maxWidth:560,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 24px 60px rgba(0,0,0,0.2)",color:"#18181b"}} onClick={e=>e.stopPropagation()}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
         <div style={{fontWeight:700,fontSize:15}}>{editData?"✏️ Edit Produk":"📝 Tambah Produk Baru"}</div>
         <button onClick={onCancel} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#71717a",lineHeight:1}}>×</button>
@@ -1298,7 +1332,7 @@ function OwnerSiteSettings() {
 
         {/* IDENTITAS */}
         {activeSection==="identitas" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🏪 Identitas Toko</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
               <div style={{gridColumn:"1/-1"}}>
@@ -1324,7 +1358,7 @@ function OwnerSiteSettings() {
 
         {/* HERO */}
         {activeSection==="hero" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🎯 Hero Section (Halaman Utama)</div>
             <div style={{display:"flex",flexDirection:"column",gap:14}}>
               <div>
@@ -1371,7 +1405,7 @@ function OwnerSiteSettings() {
 
         {/* GAMBAR */}
         {activeSection==="gambar" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🖼️ Logo & Gambar</div>
             <div style={{display:"flex",flexDirection:"column",gap:16}}>
               {[
@@ -1405,7 +1439,7 @@ function OwnerSiteSettings() {
 
         {/* TAMPILAN */}
         {activeSection==="tampilan" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🎨 Tampilan & Warna</div>
             <div style={{display:"flex",flexDirection:"column",gap:16}}>
               {[
@@ -1445,7 +1479,7 @@ function OwnerSiteSettings() {
 
         {/* KONTEN */}
         {activeSection==="konten" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>📝 Pengaturan Konten</div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               {[
@@ -1465,7 +1499,7 @@ function OwnerSiteSettings() {
 
         {/* TESTIMONI */}
         {activeSection==="testimoni" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
               <div style={{fontWeight:700,fontSize:15}}>⭐ Testimoni Pelanggan</div>
               <button onClick={()=>setTestimoni([...getTestimoni(),{nama:"",teks:"",bintang:5}])}
@@ -1493,7 +1527,7 @@ function OwnerSiteSettings() {
 
         {/* FAQ */}
         {activeSection==="faq" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
               <div style={{fontWeight:700,fontSize:15}}>❓ FAQ (Pertanyaan Umum)</div>
               <button onClick={()=>setFaq([...getFaq(),{q:"",a:""}])}
@@ -1517,7 +1551,7 @@ function OwnerSiteSettings() {
 
         {/* KONTAK */}
         {activeSection==="kontak" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>📞 Kontak & Sosial Media</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
               <div>
@@ -1542,7 +1576,7 @@ function OwnerSiteSettings() {
 
         {/* FOOTER */}
         {activeSection==="footer" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24}}>
+          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🔻 Footer</div>
             <div>
               <label style={{fontSize:12,fontWeight:600,display:"block",marginBottom:5}}>Teks Footer</label>
@@ -2109,7 +2143,7 @@ function OwnerDashboard({ user, onBack }) {
       {cancelModal && (
         <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>{setCancelModal(null);setCancelReason("");}}>
           <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)"}} />
-          <div style={{position:"relative",background:"white",borderRadius:20,padding:28,width:"90%",maxWidth:420,boxShadow:"0 24px 60px rgba(0,0,0,0.2)"}}
+          <div style={{position:"relative",background:"white",borderRadius:20,padding:28,width:"90%",maxWidth:420,boxShadow:"0 24px 60px rgba(0,0,0,0.2)",color:"#18181b"}}
             onClick={e=>e.stopPropagation()}>
             <div style={{textAlign:"center",marginBottom:20}}>
               <div style={{fontSize:40,marginBottom:8}}>🙏</div>
@@ -2353,7 +2387,7 @@ function AdminDashboard({ user, onBack }) {
       {cancelModal && (
         <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>{setCancelModal(null);setCancelReason("");}}>
           <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.5)",backdropFilter:"blur(4px)"}} />
-          <div style={{position:"relative",background:"white",borderRadius:20,padding:28,width:"90%",maxWidth:420,boxShadow:"0 24px 60px rgba(0,0,0,0.2)"}}
+          <div style={{position:"relative",background:"white",borderRadius:20,padding:28,width:"90%",maxWidth:420,boxShadow:"0 24px 60px rgba(0,0,0,0.2)",color:"#18181b"}}
             onClick={e=>e.stopPropagation()}>
             <div style={{textAlign:"center",marginBottom:20}}>
               <div style={{fontSize:40,marginBottom:8}}>🙏</div>
