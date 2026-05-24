@@ -82,20 +82,61 @@ const StarRow = ({ rating }) => {
 
 const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}body{background:#fafafa;font-family:'DM Sans',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#0f0f23;
+  min-height:100vh;
+}
+#animated-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:linear-gradient(
+    -45deg,
+    #0f0f23,
+    #1a1a3e,
+    #0d2137,
+    #1a2a1a,
+    #2a1a0f,
+    #1a0f2a,
+    #0f1a2a
+  );
+  background-size:400% 400%;
+  animation:gradientShift 15s ease infinite;
+}
+#animated-bg::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(120,80,255,0.08) 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 20%,rgba(0,180,255,0.06) 0%,transparent 50%),
+             radial-gradient(ellipse at 50% 80%,rgba(255,120,0,0.05) 0%,transparent 50%);
+  animation:orbs 20s ease-in-out infinite alternate;
+}
+@keyframes gradientShift{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes orbs{
+  0%{opacity:0.5;transform:scale(1)}
+  100%{opacity:1;transform:scale(1.1)}
+}
+#root{position:relative;z-index:1;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .nav-link{text-decoration:none;color:#71717a;font-size:14px;font-weight:500;transition:color 0.2s;cursor:pointer;background:none;border:none;font-family:inherit;padding:0;}
 .nav-link:hover{color:#18181b;}
-.platform-tab{display:flex;align-items:center;gap:7px;border:1.5px solid #e4e4e7;background:white;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.18s;color:#52525b;font-family:inherit;white-space:nowrap;}
-.platform-tab:hover{border-color:#a1a1aa;}.platform-tab.active{color:white;border-color:transparent;}
+.platform-tab{display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);backdrop-filter:blur(10px);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.18s;color:rgba(255,255,255,0.85);font-family:inherit;white-space:nowrap;}
+.platform-tab:hover{border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.2);}.platform-tab.active{color:white;border-color:transparent;box-shadow:0 4px 15px rgba(0,0,0,0.2);}
 .pscroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px;}.pscroll::-webkit-scrollbar{display:none;}
-.sinput{border:1.5px solid #e4e4e7;border-radius:10px;padding:10px 16px 10px 40px;font-size:14px;background:white;outline:none;width:260px;font-family:inherit;}
+.sinput{border:1px solid rgba(255,255,255,0.4);border-radius:10px;padding:10px 16px 10px 40px;font-size:14px;background:rgba(255,255,255,0.9);outline:none;width:260px;font-family:inherit;backdrop-filter:blur(10px);}
 .sinput:focus{border-color:#18181b;}
-.sselect{border:1.5px solid #e4e4e7;border-radius:9px;padding:8px 12px;font-size:13px;background:white;outline:none;font-family:inherit;color:#18181b;cursor:pointer;}
-.card{background:white;border-radius:20px;border:1.5px solid #f0f0f0;overflow:hidden;transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s,border-color 0.25s;cursor:pointer;display:flex;flex-direction:column;position:relative;}
-.card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.13);border-color:#d4d4d8;}
+.sselect{border:1px solid rgba(255,255,255,0.4);border-radius:9px;padding:8px 12px;font-size:13px;background:rgba(255,255,255,0.9);outline:none;font-family:inherit;color:#18181b;cursor:pointer;}
+.card{background:rgba(255,255,255,0.95);border-radius:20px;border:1px solid rgba(255,255,255,0.5);backdrop-filter:blur(10px);overflow:hidden;transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s,border-color 0.25s;cursor:pointer;display:flex;flex-direction:column;position:relative;}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.8);}
 .cthumb{height:185px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
 .cthumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.06) 100%);pointer-events:none;}
 .card:hover .platform-icon-big{transform:scale(1.15) rotate(-3deg) !important;}
@@ -145,7 +186,7 @@ html{-webkit-text-size-adjust:100%;}
 function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings, onHome }) {
   const ss = siteSettings || {site_name:"tukangmedia",primary_color:"#2563eb",logo_url:""};
   return (
-    <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:60,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100}}>
+    <nav style={{background:"rgba(255,255,255,0.85)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.2)",padding:"0 28px",height:60,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 20px rgba(0,0,0,0.1)"}}>
       <div style={{display:"flex",alignItems:"center",gap:28}}>
         <div onClick={onHome} style={{fontFamily:"'DM Serif Display',serif",fontSize:20,letterSpacing:-0.5,cursor:"pointer"}}>
               {ss.logo_url ? <img src={ss.logo_url} alt={ss.site_name} style={{height:36,objectFit:"contain"}} /> : <>tukang<span style={{color:ss.primary_color||"#2563eb"}}>media</span></>}
@@ -551,7 +592,7 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   const getFaq = () => { try { return JSON.parse(ss.faq||"[]"); } catch { return []; } };
 
   return (
-    <div style={{minHeight:"100vh",background:"#fafafa"}}>
+    <div style={{minHeight:"100vh",background:"transparent"}}>
       <style>{STYLES}</style>
       {/* ANNOUNCEMENT BAR */}
       {ss.announcement_active && ss.announcement && (
@@ -563,9 +604,9 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
 
       <div style={{maxWidth:1160,margin:"0 auto",padding:"28px 20px 60px"}}>
         <div style={{marginBottom:24}}>
-          <p style={{fontSize:11.5,fontWeight:700,letterSpacing:1.5,color:ss.primary_color||"#2563eb",textTransform:"uppercase",marginBottom:5}}>{ss.hero_badge||"Marketplace Digital"}</p>
-          <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:34,fontWeight:400,lineHeight:1.15,letterSpacing:-0.8}}>
-            {ss.hero_title}<br /><em style={{color:"#71717a"}}>{ss.hero_subtitle}</em>
+          <p style={{fontSize:11.5,fontWeight:700,letterSpacing:1.5,color:ss.primary_color||"#60a5fa",textTransform:"uppercase",marginBottom:5}}>{ss.hero_badge||"Marketplace Digital"}</p>
+          <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:34,fontWeight:400,lineHeight:1.15,letterSpacing:-0.8,color:"white",textShadow:"0 2px 20px rgba(0,0,0,0.3)"}}>
+            {ss.hero_title}<br /><em style={{color:"rgba(255,255,255,0.65)"}}>{ss.hero_subtitle}</em>
           </h1>
         </div>
 
@@ -596,7 +637,7 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
         {ss.show_stats!==false && (
         <div style={{display:"flex",gap:14,marginBottom:24,flexWrap:"wrap"}}>
           {[{l:"Produk",v:ss.stats_produk||products.length+"+"},{l:"Platform",v:ss.stats_platform||"9"},{l:"Transaksi",v:ss.stats_transaksi||"100+"}].map(s => (
-            <div key={s.l} style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:"16px 22px",display:"flex",flexDirection:"column",gap:2}}>
+            <div key={s.l} style={{background:"rgba(255,255,255,0.9)",border:"1px solid rgba(255,255,255,0.4)",borderRadius:14,padding:"16px 22px",backdropFilter:"blur(12px)",display:"flex",flexDirection:"column",gap:2}}>
               <div style={{fontFamily:"'DM Serif Display',serif",fontSize:22}}>{s.v}</div>
               <div style={{fontSize:12,color:"#71717a",fontWeight:500}}>{s.l}</div>
             </div>
@@ -617,8 +658,8 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
           </select>
         </div>
 
-        <p style={{fontSize:12.5,color:"#a1a1aa",marginBottom:16}}>
-          Menampilkan <strong style={{color:"#18181b"}}>{filtered.length}</strong> produk
+        <p style={{fontSize:12.5,color:"rgba(255,255,255,0.6)",marginBottom:16}}>
+          Menampilkan <strong style={{color:"white"}}>{filtered.length}</strong> produk
           {activePlatform!=="all" && currentPlat && (
             <span style={{marginLeft:8,background:currentPlat.bg,color:currentPlat.color,border:"1px solid "+currentPlat.border,borderRadius:6,padding:"2px 9px",fontSize:11.5,fontWeight:600,display:"inline-flex",alignItems:"center",gap:4}}>
               <PlatformIcon id={currentPlat.id} size={12} /> {currentPlat.label}
@@ -802,7 +843,7 @@ function AuthPage({ onBack }) {
   );
 
   return (
-    <div style={{minHeight:"100vh",background:"#fafafa"}}>
+    <div style={{minHeight:"100vh",background:"transparent"}}>
       <style>{STYLES}</style>
       <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",gap:12,position:"sticky",top:0}}>
         <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#52525b"}}>←</button>
@@ -1599,7 +1640,7 @@ function OwnerDashboard({ user, onBack }) {
   const paidOrders = orders.filter(o=>paidStatuses.includes(o.status)).length;
 
   return (
-    <div style={{minHeight:"100vh",background:"#fafafa"}}>
+    <div style={{minHeight:"100vh",background:"transparent"}}>
       <style>{STYLES}</style>
       <nav style={{background:"#18181b",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -1944,7 +1985,7 @@ function AdminDashboard({ user, onBack }) {
   };
 
   return (
-    <div style={{minHeight:"100vh",background:"#fafafa"}}>
+    <div style={{minHeight:"100vh",background:"transparent"}}>
       <style>{STYLES}</style>
       <nav style={{background:"#1e3a5f",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -2524,7 +2565,7 @@ function BuyerDashboard({ user, onBack }) {
   const groups = getGroups();
 
   return (
-    <div style={{minHeight:"100vh",background:"#fafafa"}}>
+    <div style={{minHeight:"100vh",background:"transparent"}}>
       <style>{STYLES}</style>
       <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -3013,6 +3054,17 @@ export default function App() {
     supabase.from("site_settings").select("*").maybeSingle().then(({data}) => {
       if (data) setSiteSettings(data);
     });
+  }, []);
+
+  // Inject animated background
+  useEffect(() => {
+    let bg = document.getElementById("animated-bg");
+    if (!bg) {
+      bg = document.createElement("div");
+      bg.id = "animated-bg";
+      document.body.insertBefore(bg, document.body.firstChild);
+    }
+    return () => {}; // keep it
   }, []);
 
   // Halaman yang butuh login — home & auth bebas diakses siapapun
