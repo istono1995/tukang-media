@@ -746,11 +746,15 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   }, []);
 
   const addToCart = (p) => {
-    if (!cart.find(c => c.id===p.id)) {
+    if (cart.find(c => c.id===p.id)) {
+      // Toggle off - remove from cart
+      setCart(c => c.filter(x => x.id !== p.id));
+      setToast('"'+p.name.substring(0,25)+'" dihapus dari keranjang');
+    } else {
       setCart(c => [...c, {...p, qty:1}]);
-      setToast('"'+p.name+'" ditambahkan ke keranjang');
-      setTimeout(() => setToast(null), 2500);
+      setToast('"'+p.name.substring(0,25)+'" ditambahkan ke keranjang');
     }
+    setTimeout(() => setToast(null), 2500);
   };
 
   const handleBuyNow = (p) => {
