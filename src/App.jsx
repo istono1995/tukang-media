@@ -28,6 +28,7 @@ const PlatformIcon = ({ id, size = 18 }) => {
   if (id === "netflix") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🎬</span>;
   if (id === "spotify") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🎵</span>;
   if (id === "steam") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🕹️</span>;
+  if (id === "rdp") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>🖥️</span>;
   if (id === "lainnya") return <span style={{...s,fontSize:size*0.85,display:"flex",alignItems:"center",justifyContent:"center"}}>📦</span>;
   return <span style={{ fontSize: size * 0.8 }}>🌐</span>;
 };
@@ -58,6 +59,7 @@ const platforms = [
   { id: "spotify",   label: "Spotify",        color: "#1db954", bg: "#f0fdf4", border: "#bbf7d0" },
   { id: "steam",     label: "Steam/Gaming",   color: "#1b2838", bg: "#f4f4f5", border: "#d4d4d8" },
   { id: "akun",      label: "Akun Premium",   color: "#6366f1", bg: "#eef2ff", border: "#c7d2fe" },
+  { id: "rdp",       label: "RDP/VPS",        color: "#6366f1", bg: "#eef2ff", border: "#c7d2fe" },
   { id: "lainnya",   label: "Lainnya",        color: "#71717a", bg: "#f4f4f5", border: "#d4d4d8" },
 ];
 
@@ -67,6 +69,7 @@ const platformGroups = [
   { id: "game",     label: "Top Up Game",    icon: "🎮", platforms: ["mlbb","pubg","freefire","valorant","topupgame"] },
   { id: "pulsa",    label: "Pulsa & Token",  icon: "⚡", platforms: ["pulsa","listrik","emoney"] },
   { id: "akun",     label: "Akun & Premium", icon: "👑", platforms: ["netflix","spotify","steam","akun"] },
+  { id: "rdp",      label: "RDP & VPS",      icon: "🖥️", platforms: ["rdp"] },
   { id: "lainnya",  label: "Lainnya",        icon: "📦", platforms: ["lainnya"] },
 ];
 
