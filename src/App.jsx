@@ -104,7 +104,7 @@ function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings 
               {ss.logo_url ? <img src={ss.logo_url} alt={ss.site_name} style={{height:36,objectFit:"contain"}} /> : <>tukang<span style={{color:ss.primary_color||"#2563eb"}}>media</span></>}
             </div>
         <div style={{display:"flex",gap:18}}>
-          {ss.navbar_tagline && <span style={{fontFamily:"'DM Serif Display',serif",fontSize:13,color:"#a1a1aa",fontStyle:"italic",letterSpacing:0.2}}>{ss.navbar_tagline.replace(/Cuan\.?$/,'').trim()} <span style={{color:ss.primary_color||"#2563eb",fontStyle:"normal",fontWeight:600}}>{ss.navbar_tagline.match(/(\w+\.?)$/)?.[1]||""}</span></span>}
+          {ss.navbar_tagline && <span style={{fontFamily:"'DM Serif Display',serif",fontSize:13,color:"#a1a1aa",fontStyle:"italic",letterSpacing:0.2}}>{ss.navbar_tagline}</span>}
 
 
         </div>
