@@ -95,10 +95,10 @@ const STYLES = `
 .sinput:focus{border-color:#18181b;}
 .sselect{border:1.5px solid #e4e4e7;border-radius:9px;padding:8px 12px;font-size:13px;background:white;outline:none;font-family:inherit;color:#18181b;cursor:pointer;}
 .card{background:white;border-radius:20px;border:1.5px solid #f0f0f0;overflow:hidden;transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s,border-color 0.25s;cursor:pointer;display:flex;flex-direction:column;position:relative;}
-.card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.12);border-color:#e4e4e7;}
-.cthumb{height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-.cthumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.08) 100%);}
-.card:hover .cthumb .platform-icon-big{transform:scale(1.12);transition:transform 0.3s ease;}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.13);border-color:#d4d4d8;}
+.cthumb{height:185px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.cthumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.06) 100%);pointer-events:none;}
+.card:hover .platform-icon-big{transform:scale(1.15) rotate(-3deg) !important;}
 .wbtn{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:white;border:1.5px solid #e4e4e7;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:2;transition:transform 0.2s;}
 .wbtn:hover{transform:scale(1.15);}
 .wbtn.active{background:#fff1f2;border-color:#f43f5e;}
@@ -633,9 +633,13 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
               const inCart = cart.find(c => c.id===p.id);
               return (
                 <div key={p.id} className="card">
-                  <div className="cthumb" style={{background:"linear-gradient(145deg,"+plat.bg+" 0%,white 60%,"+plat.bg+"99 100%)"}}>
-                    <div className="platform-icon-big" style={{transition:"transform 0.3s ease"}}>
-                      <PlatformIcon id={plat.id} size={72} />
+                  <div className="cthumb" style={{background:"linear-gradient(135deg,"+plat.color+"22 0%,"+plat.color+"11 50%,"+plat.color+"33 100%)",position:"relative",overflow:"hidden"}}>
+                    {/* Decorative circles */}
+                    <div style={{position:"absolute",width:120,height:120,borderRadius:"50%",background:plat.color+"15",top:-30,right:-30,pointerEvents:"none"}} />
+                    <div style={{position:"absolute",width:80,height:80,borderRadius:"50%",background:plat.color+"20",bottom:-20,left:-20,pointerEvents:"none"}} />
+                    <div style={{position:"absolute",width:50,height:50,borderRadius:"50%",background:plat.color+"12",top:"50%",right:"15%",pointerEvents:"none"}} />
+                    <div className="platform-icon-big" style={{transition:"transform 0.3s ease",position:"relative",zIndex:1,filter:"drop-shadow(0 4px 12px "+plat.color+"40)"}}>
+                      <PlatformIcon id={plat.id} size={76} />
                     </div>
                     {p.tag && (
                       <span className="tbadge" style={{background:tagColors[p.tag]||"#18181b"}}>
@@ -661,10 +665,13 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
                     {p.seller && <div style={{fontSize:11,color:"#a1a1aa",marginTop:2}}>oleh <span style={{color:plat.color,fontWeight:600}}>{p.seller}</span></div>}
                     <div className="prow">
                       <div>
-                        <span className="ptxt">{formatRp(p.price)}</span>
+                        <div style={{fontSize:10,color:"#a1a1aa",fontWeight:500,marginBottom:1}}>HARGA</div>
+                        <span className="ptxt" style={{color:plat.color}}>{formatRp(p.price)}</span>
                       </div>
                       {!(role==="owner"||role==="admin") && (
-                        <button className={"cbtn"+(inCart?" added":"")} onClick={() => user ? addToCart(p) : onLogin()}>
+                        <button className={"cbtn"+(inCart?" added":"")}
+                          style={inCart?{}:{background:"linear-gradient(135deg,"+plat.color+","+plat.color+"cc)"}}
+                          onClick={() => user ? addToCart(p) : onLogin()}>
                           {inCart?"✓ Keranjang":"+ Keranjang"}
                         </button>
                       )}
