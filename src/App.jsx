@@ -1711,7 +1711,7 @@ function OwnerDashboard({ user, onBack }) {
                 {/* Chat - pakai order_group_id sebagai room ID */}
                 {(o.status==="paid"||o.status==="processing"||o.status==="done") && (
                   <div style={{padding:"0 16px 16px"}}>
-                    <OrderChat orderId={o.order_code||String(o.id)} orderCode={o.order_code||"#"+o.id} currentEmail={o.user_email} isAdmin={true} />
+                    <OrderChat orderId={o.order_code||String(o.id)} orderCode={o.order_code||"#"+o.id} currentEmail={o.user_email} isAdmin={true} orderStatus={o.status} />
                   </div>
                 )}
               </div>
@@ -1992,7 +1992,7 @@ function AdminDashboard({ user, onBack }) {
               </div>
               {(o.status==="paid"||o.status==="processing"||o.status==="done") && (
                 <div style={{padding:"0 16px 16px"}}>
-                  <OrderChat orderId={o.order_code||String(o.id)} orderCode={o.order_code||"#"+o.id} currentEmail={o.user_email} isAdmin={true} />
+                  <OrderChat orderId={o.order_code||String(o.id)} orderCode={o.order_code||"#"+o.id} currentEmail={o.user_email} isAdmin={true} orderStatus={o.status} />
                 </div>
               )}
               </div>
@@ -2182,12 +2182,17 @@ function BuyerLinkInput({ groupOrders }) {
 // ============================================================
 // ORDER CHAT COMPONENT (shared buyer & admin)
 // ============================================================
-function OrderChat({ orderId, orderCode, currentEmail, isAdmin }) {
+function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus }) {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [uploadingImg, setUploadingImg] = useState(false);
   const bottomRef = useRef(null);
   const prevCountRef = useRef(0);
+  const fileRef = useRef(null);
+
+  const isDone = orderStatus === "done";
+  const canSend = isAdmin || !isDone; // buyer tidak bisa chat kalau done
 
   useEffect(() => {
     fetchMessages();
@@ -2196,7 +2201,6 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin }) {
   }, [orderId]);
 
   useEffect(() => {
-    // Scroll hanya kalau ada pesan baru (count bertambah), bukan setiap poll
     if (messages.length > prevCountRef.current) {
       prevCountRef.current = messages.length;
       bottomRef.current?.scrollIntoView({behavior:"smooth", block:"nearest"});
@@ -2211,13 +2215,14 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin }) {
     setMessages(data||[]);
   };
 
-  const sendMessage = async () => {
-    if (!text.trim()) return;
+  const sendMessage = async (msgText, imageUrl) => {
+    const finalMsg = msgText || text.trim();
+    if (!finalMsg && !imageUrl) return;
     setSending(true);
     await supabase.from("order_messages").insert([{
       room_code: orderId,
       sender_email: currentEmail,
-      message: text.trim(),
+      message: imageUrl ? `[img]${imageUrl}` : finalMsg,
       is_admin: isAdmin,
     }]);
     setText("");
@@ -2225,21 +2230,40 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin }) {
     fetchMessages();
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingImg(true);
+    const path = `chat-${orderId}-${Date.now()}.${file.name.split(".").pop()}`;
+    const { error } = await supabase.storage.from("media").upload(path, file, {upsert:true});
+    if (error) { alert("Gagal upload: "+error.message); setUploadingImg(false); return; }
+    const { data: urlData } = supabase.storage.from("media").getPublicUrl(path);
+    await sendMessage("", urlData.publicUrl);
+    setUploadingImg(false);
+    e.target.value = "";
+  };
+
   return (
     <div style={{border:"1.5px solid #e4e4e7",borderRadius:12,overflow:"hidden"}}>
       <div style={{background:"#f8fafc",padding:"10px 14px",borderBottom:"1px solid #e4e4e7",display:"flex",alignItems:"center",gap:8}}>
         <span style={{fontSize:14}}>💬</span>
         <span style={{fontWeight:700,fontSize:13}}>Chat dengan {isAdmin?"Pembeli":"Admin"}</span>
+        {isDone && !isAdmin && <span style={{fontSize:11,background:"#f0fdf4",color:"#16a34a",borderRadius:6,padding:"2px 8px",fontWeight:600}}>✅ Selesai</span>}
         <span style={{fontSize:11,color:"#a1a1aa",marginLeft:"auto"}}>Kode: {orderCode}</span>
       </div>
-      <div style={{height:200,overflowY:"auto",padding:12,display:"flex",flexDirection:"column",gap:8,background:"white"}}>
-        {messages.length===0 && <div style={{textAlign:"center",color:"#a1a1aa",fontSize:12,margin:"auto"}}>Belum ada pesan. Mulai percakapan!</div>}
+      <div style={{height:220,overflowY:"auto",padding:12,display:"flex",flexDirection:"column",gap:8,background:"white"}}>
+        {messages.length===0 && <div style={{textAlign:"center",color:"#a1a1aa",fontSize:12,margin:"auto"}}>Belum ada pesan.</div>}
         {messages.map(m => {
           const isMine = m.sender_email===currentEmail;
+          const isImg = m.message?.startsWith("[img]");
+          const imgUrl = isImg ? m.message.replace("[img]","") : null;
           return (
             <div key={m.id} style={{display:"flex",flexDirection:"column",alignItems:isMine?"flex-end":"flex-start"}}>
-              <div style={{background:isMine?"#18181b":m.is_admin?"#eff6ff":"#f4f4f5",color:isMine?"white":m.is_admin?"#1d4ed8":"#18181b",borderRadius:isMine?"12px 12px 2px 12px":"12px 12px 12px 2px",padding:"8px 12px",maxWidth:"80%",fontSize:13,lineHeight:1.5}}>
-                {m.message}
+              <div style={{background:isMine?"#18181b":m.is_admin?"#eff6ff":"#f4f4f5",color:isMine?"white":m.is_admin?"#1d4ed8":"#18181b",borderRadius:isMine?"12px 12px 2px 12px":"12px 12px 12px 2px",padding:isImg?"6px":"8px 12px",maxWidth:"80%",fontSize:13,lineHeight:1.5,overflow:"hidden"}}>
+                {isImg
+                  ? <img src={imgUrl} alt="bukti" style={{maxWidth:220,maxHeight:220,borderRadius:8,display:"block",cursor:"pointer"}} onClick={()=>window.open(imgUrl,"_blank")} />
+                  : m.message
+                }
               </div>
               <div style={{fontSize:10,color:"#a1a1aa",marginTop:2}}>
                 {m.is_admin?"🛡️ Admin":"👤 Pembeli"} · {new Date(m.created_at).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})}
@@ -2249,14 +2273,33 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin }) {
         })}
         <div ref={bottomRef} />
       </div>
-      <div style={{padding:"10px 12px",borderTop:"1px solid #e4e4e7",background:"#fafafa",display:"flex",gap:8}}>
-        <input value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&sendMessage()}
-          placeholder="Tulis pesan..." style={{flex:1,border:"1.5px solid #e4e4e7",borderRadius:9,padding:"8px 12px",fontSize:13,fontFamily:"inherit",outline:"none",background:"white"}} />
-        <button onClick={sendMessage} disabled={sending||!text.trim()}
-          style={{background:"#18181b",color:"white",border:"none",borderRadius:9,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",opacity:sending?0.6:1}}>
-          Kirim
-        </button>
-      </div>
+
+      {/* Input area */}
+      {canSend ? (
+        <div style={{padding:"10px 12px",borderTop:"1px solid #e4e4e7",background:"#fafafa",display:"flex",gap:8,alignItems:"center"}}>
+          {/* Upload foto - hanya admin/owner */}
+          {isAdmin && (
+            <>
+              <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleImageUpload} />
+              <button onClick={()=>fileRef.current?.click()} disabled={uploadingImg}
+                title="Kirim foto bukti"
+                style={{background:"#f4f4f5",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"7px 10px",fontSize:16,cursor:"pointer",flexShrink:0,opacity:uploadingImg?0.5:1}}>
+                {uploadingImg?"⏳":"📷"}
+              </button>
+            </>
+          )}
+          <input value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&sendMessage()}
+            placeholder="Tulis pesan..." style={{flex:1,border:"1.5px solid #e4e4e7",borderRadius:9,padding:"8px 12px",fontSize:13,fontFamily:"inherit",outline:"none",background:"white"}} />
+          <button onClick={()=>sendMessage()} disabled={sending||!text.trim()}
+            style={{background:"#18181b",color:"white",border:"none",borderRadius:9,padding:"8px 16px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",opacity:sending?0.6:1}}>
+            Kirim
+          </button>
+        </div>
+      ) : (
+        <div style={{padding:"12px 16px",borderTop:"1px solid #e4e4e7",background:"#f8fafc",textAlign:"center",fontSize:12,color:"#a1a1aa"}}>
+          ✅ Pesanan selesai — chat sudah ditutup
+        </div>
+      )}
     </div>
   );
 }
@@ -2512,7 +2555,7 @@ function BuyerDashboard({ user, onBack }) {
                 )}
 
                 {/* Chat - gunakan groupId sebagai room ID supaya semua order dalam group share 1 chat */}
-                <OrderChat orderId={modal.code} orderCode={modal.code} currentEmail={user.email} isAdmin={false} />
+                <OrderChat orderId={modal.code} orderCode={modal.code} currentEmail={user.email} isAdmin={false} orderStatus={modal.status} />
               </div>
             )}
 
