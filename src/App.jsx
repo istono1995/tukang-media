@@ -203,7 +203,7 @@ html,body,#root{min-height:100vh;width:100%;}
 .dtab.active{color:#18181b;border-bottom-color:#18181b;}
 .dinput{width:100%;border:1.5px solid #e4e4e7;border-radius:10px;padding:10px 14px;font-size:13px;background:white;outline:none;font-family:inherit;}
 .dinput:focus{border-color:#18181b;}
-.pitem{display:flex;align-items:center;gap:14px;padding:14px 18px;background:white;border:1.5px solid #f0f0f0;border-radius:12px;margin-bottom:10px;}
+.pitem{display:flex;align-items:center;gap:14px;padding:14px 18px;background:white;border:1.5px solid #f0f0f0;border-radius:12px;margin-bottom:10px;color:#18181b;}
 .pitem:hover{border-color:#d4d4d8;}
 .uitem{display:flex;align-items:center;gap:14px;padding:14px 18px;background:white;border:1.5px solid #f0f0f0;border-radius:12px;margin-bottom:10px;}
 .oitem{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:white;border:1.5px solid #f0f0f0;border-radius:12px;margin-bottom:10px;}
@@ -1340,7 +1340,7 @@ function OwnerSiteSettings() {
 
         {/* IDENTITAS */}
         {activeSection==="identitas" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🏪 Identitas Toko</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
               <div style={{gridColumn:"1/-1"}}>
@@ -1366,7 +1366,7 @@ function OwnerSiteSettings() {
 
         {/* HERO */}
         {activeSection==="hero" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🎯 Hero Section (Halaman Utama)</div>
             <div style={{display:"flex",flexDirection:"column",gap:14}}>
               <div>
@@ -1413,7 +1413,7 @@ function OwnerSiteSettings() {
 
         {/* GAMBAR */}
         {activeSection==="gambar" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🖼️ Logo & Gambar</div>
             <div style={{display:"flex",flexDirection:"column",gap:16}}>
               {[
@@ -1447,7 +1447,7 @@ function OwnerSiteSettings() {
 
         {/* TAMPILAN */}
         {activeSection==="tampilan" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🎨 Tampilan & Warna</div>
             <div style={{display:"flex",flexDirection:"column",gap:16}}>
               {[
@@ -1487,7 +1487,7 @@ function OwnerSiteSettings() {
 
         {/* KONTEN */}
         {activeSection==="konten" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>📝 Pengaturan Konten</div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               {[
@@ -1507,7 +1507,7 @@ function OwnerSiteSettings() {
 
         {/* TESTIMONI */}
         {activeSection==="testimoni" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
               <div style={{fontWeight:700,fontSize:15}}>⭐ Testimoni Pelanggan</div>
               <button onClick={()=>setTestimoni([...getTestimoni(),{nama:"",teks:"",bintang:5}])}
@@ -1535,7 +1535,7 @@ function OwnerSiteSettings() {
 
         {/* FAQ */}
         {activeSection==="faq" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
               <div style={{fontWeight:700,fontSize:15}}>❓ FAQ (Pertanyaan Umum)</div>
               <button onClick={()=>setFaq([...getFaq(),{q:"",a:""}])}
@@ -1559,7 +1559,7 @@ function OwnerSiteSettings() {
 
         {/* KONTAK */}
         {activeSection==="kontak" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>📞 Kontak & Sosial Media</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
               <div>
@@ -1584,7 +1584,7 @@ function OwnerSiteSettings() {
 
         {/* FOOTER */}
         {activeSection==="footer" && (
-          <div style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:24,color:"#18181b"}}>
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:16}}>🔻 Footer</div>
             <div>
               <label style={{fontSize:12,fontWeight:600,display:"block",marginBottom:5}}>Teks Footer</label>
