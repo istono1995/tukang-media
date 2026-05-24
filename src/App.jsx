@@ -1926,11 +1926,11 @@ function OwnerDashboard({ user, onBack }) {
             {icon:"✅",label:"Pesanan Selesai",value:doneOrders,color:"#16a34a",sub:orders.filter(o=>o.status==="processing").length+" sedang proses"},
             {icon:"💰",label:"Total Pendapatan",value:formatRp(totalRevenue),color:"#b45309",sub:null},
           ].map(s => (
-            <div key={s.label} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:14,padding:"18px 20px"}}>
-              <div style={{fontSize:24,marginBottom:6}}>{s.icon}</div>
-              <div style={{fontFamily:"'DM Serif Display',serif",fontSize:s.value.toString().length>8?16:22,color:s.color}}>{s.value}</div>
-              <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:2}}>{s.label}</div>
-              {s.sub && <div style={{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:3}}>{s.sub}</div>}
+            <div key={s.label} style={{background:"rgba(0,0,0,0.4)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:14,padding:"18px 20px",backdropFilter:"blur(12px)"}}>
+              <div style={{fontSize:26,marginBottom:8}}>{s.icon}</div>
+              <div style={{fontFamily:"'DM Serif Display',serif",fontSize:s.value.toString().length>8?18:26,color:s.color,fontWeight:800,textShadow:"0 2px 8px rgba(0,0,0,0.8)"}}>{s.value}</div>
+              <div style={{fontSize:13,color:"white",fontWeight:700,marginTop:4,textShadow:"0 1px 6px rgba(0,0,0,0.8)"}}>{s.label}</div>
+              {s.sub && <div style={{fontSize:11,color:"rgba(255,255,255,0.75)",marginTop:3,fontWeight:500}}>{s.sub}</div>}
             </div>
           ))}
         </div>
