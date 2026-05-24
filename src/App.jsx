@@ -2598,7 +2598,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
     {icon:"🔒",title:"100% Aman",desc:"Sistem keamanan berlapis dengan enkripsi data penuh."},
     {icon:"💰",title:"Harga Terjangkau",desc:"Harga terbaik dengan kualitas layanan premium."},
     {icon:"🎯",title:"Hasil Terjamin",desc:"Garansi hasil sesuai pesanan atau uang kembali."},
-    {icon:"📞",title:"Support Jam Kerja",desc:"Admin siap membantu Senin–Jumat, pukul 09.00–16.00 WIB."},
+    {icon:"📞",title:"CS & Chat Admin",desc:"Chat CS kami aktif Senin–Jumat pukul 09.00–16.00 WIB. Di luar jam tersebut, pesanan tetap berjalan otomatis 24 jam."},
     {icon:"🏆",title:"Terpercaya",desc:"Ribuan pelanggan puas telah menggunakan layanan kami."},
   ];
 
@@ -2665,7 +2665,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
               {v:ss.stats_produk||"24+",l:"Layanan Tersedia"},
               {v:ss.stats_platform||"9",l:"Platform Didukung"},
               {v:ss.stats_transaksi||"100+",l:"Transaksi Selesai"},
-              {v:"09-16",l:"Jam Layanan (Sen-Jum)"},
+              {v:"24/7",l:"Layanan Otomatis Nonstop"},
             ].map((s,i,arr) => (
               <div key={s.l} style={{textAlign:"center",padding:"20px 32px",borderRight:i<arr.length-1?"1px solid #e4e4e7":"none"}}>
                 <div style={{fontFamily:"'DM Serif Display',serif",fontSize:32,color:primary,fontWeight:700}}>{s.v}</div>
