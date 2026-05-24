@@ -95,12 +95,12 @@ html{-webkit-text-size-adjust:100%;}
 // ============================================================
 // NAVBAR
 // ============================================================
-function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings }) {
+function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings, onHome }) {
   const ss = siteSettings || {site_name:"tukangmedia",primary_color:"#2563eb",logo_url:""};
   return (
     <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:60,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100}}>
       <div style={{display:"flex",alignItems:"center",gap:28}}>
-        <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,letterSpacing:-0.5}}>
+        <div onClick={onHome} style={{fontFamily:"'DM Serif Display',serif",fontSize:20,letterSpacing:-0.5,cursor:"pointer"}}>
               {ss.logo_url ? <img src={ss.logo_url} alt={ss.site_name} style={{height:36,objectFit:"contain"}} /> : <>tukang<span style={{color:ss.primary_color||"#2563eb"}}>media</span></>}
             </div>
         <div style={{display:"flex",gap:18}}>
@@ -509,7 +509,7 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
           {ss.announcement}
         </div>
       )}
-      <Navbar user={user} role={role} onLogin={onLogin} onDashboard={onDashboard} cart={cart} setCart={setCart} siteSettings={siteSettings} />
+      <Navbar user={user} role={role} onLogin={onLogin} onDashboard={onDashboard} cart={cart} setCart={setCart} siteSettings={siteSettings} onHome={()=>window.scrollTo({top:0,behavior:"smooth"})} />
 
       <div style={{maxWidth:1160,margin:"0 auto",padding:"28px 20px 60px"}}>
         <div style={{marginBottom:24}}>
@@ -726,7 +726,7 @@ function AuthPage({ onBack }) {
       <style>{STYLES}</style>
       <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",gap:12,position:"sticky",top:0}}>
         <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#52525b"}}>←</button>
-        <div style={{fontFamily:"'DM Serif Display',serif",fontSize:18}}>tukang<span style={{color:"#2563eb"}}>media</span></div>
+        <div onClick={onBack} style={{fontFamily:"'DM Serif Display',serif",fontSize:18,cursor:"pointer"}}>tukang<span style={{color:"#2563eb"}}>media</span></div>
       </nav>
       <div style={{display:"flex",alignItems:"center",justifyContent:"center",padding:"40px 20px",minHeight:"calc(100vh - 58px)"}}>
         <div style={{width:"100%",maxWidth:420,animation:"fadeUp 0.3s ease"}}>
@@ -2666,7 +2666,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
 
       {/* NAVBAR */}
       <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 5%",height:64,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 8px rgba(0,0,0,0.04)"}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>window.scrollTo({top:0,behavior:"smooth"})}>
           {ss.logo_url ? <img src={ss.logo_url} alt="logo" style={{height:36,borderRadius:8}} /> : null}
           <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20}}>
             {(ss.site_name||"tukangmedia").replace(/\s/g,"").toLowerCase().includes("tukang")
