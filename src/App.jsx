@@ -805,18 +805,22 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
           ))}
         </div>
 
-        {/* PLATFORM TABS - filtered by group */}
-        {activeGroup !== "all" && (
-          <div className="pscroll">
-            {platforms.filter(p => platformGroups.find(g=>g.id===activeGroup)?.platforms?.includes(p.id)).map(p => (
-              <button key={p.id} className={"platform-tab"+(activePlatform===p.id?" active":"")}
-                style={activePlatform===p.id?{background:p.color,color:"white",borderColor:p.color}:{}}
-                onClick={() => setActivePlatform(activePlatform===p.id?"all":p.id)}>
-                <PlatformIcon id={p.id} size={16} />{p.label}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* PLATFORM TABS - filtered by group, only show if more than 1 platform */}
+        {activeGroup !== "all" && (() => {
+          const groupPlats = platforms.filter(p => platformGroups.find(g=>g.id===activeGroup)?.platforms?.includes(p.id));
+          if (groupPlats.length <= 1) return null;
+          return (
+            <div className="pscroll">
+              {groupPlats.map(p => (
+                <button key={p.id} className={"platform-tab"+(activePlatform===p.id?" active":"")}
+                  style={activePlatform===p.id?{background:p.color,color:"white",borderColor:p.color}:{}}
+                  onClick={() => setActivePlatform(activePlatform===p.id?"all":p.id)}>
+                  <PlatformIcon id={p.id} size={16} />{p.label}
+                </button>
+              ))}
+            </div>
+          );
+        })()}
 
         {ss.show_stats!==false && (
         <div style={{display:"flex",gap:14,marginBottom:24,flexWrap:"wrap"}}>
