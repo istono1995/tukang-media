@@ -2598,7 +2598,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
     {icon:"🔒",title:"100% Aman",desc:"Sistem keamanan berlapis dengan enkripsi data penuh."},
     {icon:"💰",title:"Harga Terjangkau",desc:"Harga terbaik dengan kualitas layanan premium."},
     {icon:"🎯",title:"Hasil Terjamin",desc:"Garansi hasil sesuai pesanan atau uang kembali."},
-    {icon:"📞",title:"Support 24 Jam",desc:"Tim admin siap membantu kamu kapan saja."},
+    {icon:"📞",title:"Support Jam Kerja",desc:"Admin siap membantu Senin–Jumat, pukul 09.00–16.00 WIB."},
     {icon:"🏆",title:"Terpercaya",desc:"Ribuan pelanggan puas telah menggunakan layanan kami."},
   ];
 
@@ -2665,7 +2665,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
               {v:ss.stats_produk||"24+",l:"Layanan Tersedia"},
               {v:ss.stats_platform||"9",l:"Platform Didukung"},
               {v:ss.stats_transaksi||"100+",l:"Transaksi Selesai"},
-              {v:"24/7",l:"Support Online"},
+              {v:"09-16",l:"Jam Layanan (Sen-Jum)"},
             ].map((s,i,arr) => (
               <div key={s.l} style={{textAlign:"center",padding:"20px 32px",borderRight:i<arr.length-1?"1px solid #e4e4e7":"none"}}>
                 <div style={{fontFamily:"'DM Serif Display',serif",fontSize:32,color:primary,fontWeight:700}}>{s.v}</div>
@@ -2800,7 +2800,9 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
 export default function App() {
   const [page, setPage] = useState(() => {
     const saved = localStorage.getItem("tm_page");
-    return saved || "home";
+    // "auth" tidak boleh jadi initial page - selalu mulai dari home/landing
+    if (!saved || saved === "auth") return "home";
+    return saved;
   });
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
