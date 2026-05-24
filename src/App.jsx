@@ -94,19 +94,23 @@ const STYLES = `
 .sinput{border:1.5px solid #e4e4e7;border-radius:10px;padding:10px 16px 10px 40px;font-size:14px;background:white;outline:none;width:260px;font-family:inherit;}
 .sinput:focus{border-color:#18181b;}
 .sselect{border:1.5px solid #e4e4e7;border-radius:9px;padding:8px 12px;font-size:13px;background:white;outline:none;font-family:inherit;color:#18181b;cursor:pointer;}
-.card{background:white;border-radius:16px;border:1.5px solid #f0f0f0;overflow:hidden;transition:transform 0.22s cubic-bezier(.22,1,.36,1),box-shadow 0.22s;cursor:pointer;display:flex;flex-direction:column;}
-.card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.08);}
-.cthumb{height:160px;display:flex;align-items:center;justify-content:center;position:relative;}
-.wbtn{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;background:white;border:1.5px solid #e4e4e7;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;}
+.card{background:white;border-radius:20px;border:1.5px solid #f0f0f0;overflow:hidden;transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s,border-color 0.25s;cursor:pointer;display:flex;flex-direction:column;position:relative;}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.12);border-color:#e4e4e7;}
+.cthumb{height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.cthumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,0.08) 100%);}
+.card:hover .cthumb .platform-icon-big{transform:scale(1.12);transition:transform 0.3s ease;}
+.wbtn{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:white;border:1.5px solid #e4e4e7;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:2;transition:transform 0.2s;}
+.wbtn:hover{transform:scale(1.15);}
 .wbtn.active{background:#fff1f2;border-color:#f43f5e;}
-.tbadge{position:absolute;top:10px;left:10px;border-radius:6px;padding:3px 9px;font-size:10px;font-weight:700;color:white;}
-.ppip{position:absolute;bottom:10px;left:10px;border-radius:7px;padding:3px 9px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;}
+.tbadge{position:absolute;top:12px;left:12px;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:800;color:white;letter-spacing:0.5px;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.ppip{position:absolute;bottom:12px;left:12px;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;z-index:2;backdrop-filter:blur(4px);}
 .cbody{padding:16px;flex:1;display:flex;flex-direction:column;gap:5px;}
 .prow{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:11px;border-top:1px solid #f4f4f5;}
-.ptxt{font-family:'DM Serif Display',serif;font-size:17px;color:#18181b;}
-.cbtn{background:#18181b;color:white;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
-.cbtn:hover{background:#3f3f46;}.cbtn.added{background:#166534;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;}
+.ptxt{font-family:'DM Serif Display',serif;font-size:18px;color:#18181b;font-weight:400;}
+.cbtn{background:linear-gradient(135deg,#18181b,#3f3f46);color:white;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;letter-spacing:0.2px;}
+.cbtn:hover{background:linear-gradient(135deg,#27272a,#52525b);transform:scale(1.03);}
+.cbtn.added{background:linear-gradient(135deg,#166534,#15803d);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#18181b;color:white;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;animation:fadeInUp 0.3s ease;white-space:nowrap;}
 .ainput{width:100%;border:1.5px solid #e4e4e7;border-radius:11px;padding:12px 14px;font-size:14px;background:white;outline:none;font-family:inherit;}
 .ainput:focus{border-color:#18181b;}
@@ -629,10 +633,16 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
               const inCart = cart.find(c => c.id===p.id);
               return (
                 <div key={p.id} className="card">
-                  <div className="cthumb" style={{background:"linear-gradient(135deg,"+plat.bg+",#e4e4e7)"}}>
-                    <div style={{fontSize:52}}><PlatformIcon id={plat.id} size={60} /></div>
-                    {p.tag && <span className="tbadge" style={{background:tagColors[p.tag]||"#18181b"}}>{p.tag}</span>}
-                    <div className="ppip" style={{background:plat.bg,color:plat.color,border:"1px solid "+plat.border}}>
+                  <div className="cthumb" style={{background:"linear-gradient(145deg,"+plat.bg+" 0%,white 60%,"+plat.bg+"99 100%)"}}>
+                    <div className="platform-icon-big" style={{transition:"transform 0.3s ease"}}>
+                      <PlatformIcon id={plat.id} size={72} />
+                    </div>
+                    {p.tag && (
+                      <span className="tbadge" style={{background:tagColors[p.tag]||"#18181b"}}>
+                        {p.tag==="Terlaris"?"🔥":p.tag==="Baru"?"✨":p.tag==="Populer"?"⭐":p.tag==="Diskon"?"🏷️":"👑"} {p.tag}
+                      </span>
+                    )}
+                    <div className="ppip" style={{background:plat.bg+"ee",color:plat.color,border:"1px solid "+plat.border}}>
                       <PlatformIcon id={p.platform} size={13} />
                       <span style={{fontSize:10.5,fontWeight:700}}>{plat.label}</span>
                     </div>
@@ -641,19 +651,21 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
                     </button>
                   </div>
                   <div className="cbody">
-                    <div style={{fontSize:14,fontWeight:600,lineHeight:1.35}}>{p.name}</div>
-                    <div style={{fontSize:12,color:"#71717a",lineHeight:1.5,flex:1}}>{p.description}</div>
-                    <div style={{display:"flex",alignItems:"center",gap:5,marginTop:5}}>
+                    <div style={{fontSize:13.5,fontWeight:700,lineHeight:1.4,color:"#18181b"}}>{p.name}</div>
+                    {p.description && <div style={{fontSize:11.5,color:"#71717a",lineHeight:1.5,flex:1,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.description}</div>}
+                    <div style={{display:"flex",alignItems:"center",gap:5,marginTop:4}}>
                       <StarRow rating={p.rating} />
-                      <span style={{fontSize:11.5,color:"#a1a1aa"}}>{p.rating}</span>
-                      <span style={{fontSize:11.5,color:"#a1a1aa",marginLeft:"auto"}}>⬇ {p.downloads}</span>
+                      <span style={{fontSize:11,color:"#a1a1aa",fontWeight:500}}>{p.rating}</span>
+                      {p.downloads>0 && <span style={{fontSize:11,color:"#a1a1aa",marginLeft:"auto"}}>⬇ {p.downloads}</span>}
                     </div>
-                    <div style={{fontSize:11.5,color:"#a1a1aa",marginTop:4}}>oleh <span style={{color:"#52525b",fontWeight:500}}>{p.seller}</span></div>
+                    {p.seller && <div style={{fontSize:11,color:"#a1a1aa",marginTop:2}}>oleh <span style={{color:plat.color,fontWeight:600}}>{p.seller}</span></div>}
                     <div className="prow">
-                      <span className="ptxt">{formatRp(p.price)}</span>
+                      <div>
+                        <span className="ptxt">{formatRp(p.price)}</span>
+                      </div>
                       {!(role==="owner"||role==="admin") && (
                         <button className={"cbtn"+(inCart?" added":"")} onClick={() => user ? addToCart(p) : onLogin()}>
-                          {inCart?"✓ Di Keranjang":"+ Keranjang"}
+                          {inCart?"✓ Keranjang":"+ Keranjang"}
                         </button>
                       )}
                     </div>
