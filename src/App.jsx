@@ -83,6 +83,7 @@ const StarRow = ({ rating }) => {
 const STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;}
 body{
   font-family:'DM Sans',sans-serif;
   background:#0f0f23;
@@ -90,7 +91,9 @@ body{
 }
 #animated-bg{
   position:fixed;
-  inset:0;
+  top:0;left:0;right:0;bottom:0;
+  width:100vw;
+  height:100vh;
   z-index:0;
   background:linear-gradient(
     -45deg,
@@ -151,7 +154,9 @@ body{
 .cbtn{background:linear-gradient(135deg,#18181b,#3f3f46);color:white;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;letter-spacing:0.2px;}
 .cbtn:hover{background:linear-gradient(135deg,#27272a,#52525b);transform:scale(1.03);}
 .cbtn.added{background:linear-gradient(135deg,#166534,#15803d);}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:12px;}.cbody{padding:12px;}}
+@media(max-width:380px){.grid{grid-template-columns:1fr;}}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#18181b;color:white;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;animation:fadeInUp 0.3s ease;white-space:nowrap;}
 .ainput{width:100%;border:1.5px solid #e4e4e7;border-radius:11px;padding:12px 14px;font-size:14px;background:white;outline:none;font-family:inherit;}
 .ainput:focus{border-color:#18181b;}
@@ -356,7 +361,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
                     {cart.map(p => {
                       const plat = platforms.find(x=>x.id===p.platform)||platforms[0];
                       return (
-                        <div key={p.id} style={{display:"flex",gap:12,background:"#fafafa",borderRadius:12,padding:14,border:"1.5px solid #f0f0f0"}}>
+                        <div key={p.id} style={{display:"flex",gap:12,background:"rgba(255,255,255,0.04)",borderRadius:12,padding:14,border:"1.5px solid #f0f0f0"}}>
                           <div style={{width:48,height:48,borderRadius:10,background:plat.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                             <PlatformIcon id={plat.id} size={24} />
                           </div>
@@ -833,7 +838,7 @@ function AuthPage({ onBack }) {
   };
 
   if (done) return (
-    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"#fafafa",textAlign:"center",padding:24}}>
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"rgba(255,255,255,0.04)",textAlign:"center",padding:24}}>
       <style>{STYLES}</style>
       <div style={{fontSize:64,marginBottom:16}}>📧</div>
       <div style={{fontFamily:"'DM Serif Display',serif",fontSize:28,marginBottom:8}}>Email Terkirim!</div>
@@ -845,7 +850,7 @@ function AuthPage({ onBack }) {
   return (
     <div style={{minHeight:"100vh",background:"transparent"}}>
       <style>{STYLES}</style>
-      <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",gap:12,position:"sticky",top:0}}>
+      <nav style={{background:"rgba(255,255,255,0.9)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.15)",padding:"0 28px",height:58,display:"flex",alignItems:"center",gap:12,position:"sticky",top:0}}>
         <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#52525b"}}>←</button>
         <div onClick={onBack} style={{fontFamily:"'DM Serif Display',serif",fontSize:18,cursor:"pointer"}}>tukang<span style={{color:"#2563eb"}}>media</span></div>
       </nav>
@@ -2474,7 +2479,7 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus, onC
 
       {/* Input area */}
       {canSend && !previewImg ? (
-        <div style={{padding:"10px 12px",borderTop:"1px solid #e4e4e7",background:"#fafafa",display:"flex",gap:8,alignItems:"center"}}>
+        <div style={{padding:"10px 12px",borderTop:"1px solid #e4e4e7",background:"rgba(255,255,255,0.04)",display:"flex",gap:8,alignItems:"center"}}>
           {isAdmin && (
             <>
               <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFileSelect} />
@@ -2858,7 +2863,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
   ];
 
   return (
-    <div style={{minHeight:"100vh",background:"#fafafa",fontFamily:"'DM Sans',sans-serif"}}>
+    <div style={{minHeight:"100vh",background:"transparent",fontFamily:"'DM Sans',sans-serif"}}>
       <style>{STYLES}</style>
 
       {/* NAVBAR */}
@@ -3135,7 +3140,7 @@ export default function App() {
   };
 
   const loadingScreen = (
-    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#fafafa",fontFamily:"'DM Sans',sans-serif"}}>
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"transparent",fontFamily:"'DM Sans',sans-serif"}}>
       <style>{STYLES}</style>
       <div style={{textAlign:"center"}}>
         <div style={{width:40,height:40,border:"3px solid #e4e4e7",borderTopColor:"#18181b",borderRadius:"50%",animation:"spin 0.8s linear infinite",margin:"0 auto 16px"}} />
