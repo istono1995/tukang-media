@@ -277,14 +277,6 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
     qris:"⬛", dana:"💙", ovo:"💜", gopay:"💚", shopeepay:"🧡", linkaja:"❤️"
   };
 
-  // Auto-open for buy now
-  useEffect(() => {
-    if (isBuyNow) {
-      setOpen(true);
-      setStep("checkout");
-    }
-  }, [isBuyNow]);
-
   useEffect(() => {
     if (open && step==="checkout") {
       supabase.from("payment_settings").select("*").then(({data}) => setPayMethods(data||[]));
@@ -580,6 +572,119 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
 // ============================================================
 // MARKETPLACE
 // ============================================================
+
+// ============================================================
+// BUY NOW MODAL - single product direct checkout
+// ============================================================
+function BuyNowModal({ product, user, onClose, onOrderDone }) {
+  const [payMethods, setPayMethods] = useState([]);
+  const [selectedPay, setSelectedPay] = useState(null);
+  const [buyerLink, setBuyerLink] = useState("");
+  const [placing, setPlacing] = useState(false);
+  const [step, setStep] = useState("checkout");
+  const [orderCode, setOrderCode] = useState("");
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [useWallet, setUseWallet] = useState(false);
+
+  useEffect(() => {
+    supabase.from("payment_settings").select("*").then(({data}) => setPayMethods(data||[]));
+    if (user) getWallet(user.email).then(w => setWalletBalance(w?.balance||0));
+  }, []);
+
+  const LOGOS = {
+    bca:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg",
+    bni:"https://upload.wikimedia.org/wikipedia/id/5/55/BNI_logo.svg",
+    bri:"https://upload.wikimedia.org/wikipedia/commons/6/68/BANK_BRI_logo.svg",
+    mandiri:"https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg",
+    dana:"https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg",
+    ovo:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg",
+    gopay:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/320px-Gopay_logo.svg.png",
+    qris:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_QRIS.svg/320px-Logo_QRIS.svg.png",
+  };
+
+  const placeOrder = async () => {
+    if (!useWallet && !selectedPay) return alert("Pilih metode pembayaran!");
+    if (useWallet && walletBalance < product.price) return alert("Saldo tidak cukup!");
+    setPlacing(true);
+    const code = "TM-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+Math.floor(1000+Math.random()*9000);
+    const pm = useWallet ? null : payMethods.find(p=>p.id===selectedPay);
+    const payInfo = useWallet ? "Wallet" : (pm ? `${pm.bank_name} - ${pm.account_number} a/n ${pm.holder_name}` : "");
+    const uniqueAmount = product.price + (useWallet?0:Math.floor(100+Math.random()*900));
+    const {error} = await supabase.from("orders").insert([{
+      product_id:product.id, product_name:product.name, price:product.price, quantity:1,
+      user_email:user.email, payment_method:payInfo, status:useWallet?"paid":"pending",
+      order_code:code, order_group_id:code, buyer_link:buyerLink,
+      notes:useWallet?`wallet_payment:${product.price}`:`unique_amount:${uniqueAmount}`,
+    }]);
+    if (error) { setPlacing(false); return alert("Gagal: "+error.message); }
+    if (useWallet) await deductWalletBalance(user.email, product.price, "Beli langsung "+code, code);
+    setOrderCode(code); setPlacing(false); setStep("success");
+  };
+
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:300,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
+      <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(4px)"}} />
+      <div style={{position:"relative",background:"white",borderRadius:20,width:"90%",maxWidth:440,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 24px 60px rgba(0,0,0,0.3)"}} onClick={e=>e.stopPropagation()}>
+        <div style={{padding:"16px 20px",borderBottom:"1px solid #f0f0f0",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,background:"white"}}>
+          <div style={{fontWeight:700,fontSize:15}}>⚡ Beli Langsung</div>
+          <button onClick={onClose} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#71717a"}}>✕</button>
+        </div>
+        {step==="success" ? (
+          <div style={{padding:32,textAlign:"center"}}>
+            <div style={{fontSize:48,marginBottom:12}}>✅</div>
+            <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,marginBottom:8}}>Pesanan Berhasil!</div>
+            <div style={{fontSize:13,color:"#71717a",marginBottom:6}}>Kode: <strong>{orderCode}</strong></div>
+            <div style={{fontSize:13,color:"#52525b",marginBottom:20,lineHeight:1.6}}>Transfer ke metode yang dipilih. Admin akan verifikasi dan proses, sabar ya 🙂</div>
+            <button onClick={onOrderDone} style={{background:"#18181b",color:"white",border:"none",borderRadius:10,padding:"11px 28px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Lihat Pesanan</button>
+          </div>
+        ) : (
+          <div style={{padding:20,display:"flex",flexDirection:"column",gap:14}}>
+            <div style={{background:"#f8fafc",borderRadius:12,padding:14,display:"flex",gap:12,alignItems:"center"}}>
+              <div style={{fontWeight:700,fontSize:13,flex:1,lineHeight:1.4}}>{product.name}</div>
+              <div style={{fontFamily:"'DM Serif Display',serif",fontSize:16,fontWeight:700}}>{formatRp(product.price)}</div>
+            </div>
+            {walletBalance>0 && (
+              <div onClick={()=>{setUseWallet(w=>!w);setSelectedPay(null);}} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,border:"2px solid "+(useWallet?"#18181b":"#e4e4e7"),cursor:"pointer"}}>
+                <div style={{width:36,height:36,borderRadius:9,background:"#18181b",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>💰</div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:700,fontSize:13}}>Saldo Wallet</div>
+                  <div style={{fontSize:12,color:walletBalance>=product.price?"#16a34a":"#dc2626",fontWeight:600}}>{formatRp(walletBalance)} {walletBalance>=product.price?"✓":"✗ Kurang"}</div>
+                </div>
+                <div style={{width:18,height:18,borderRadius:"50%",border:"2px solid "+(useWallet?"#18181b":"#d4d4d8"),display:"flex",alignItems:"center",justifyContent:"center"}}>{useWallet&&<div style={{width:8,height:8,borderRadius:"50%",background:"#18181b"}}/>}</div>
+              </div>
+            )}
+            {!useWallet && (
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#52525b",letterSpacing:0.5}}>PILIH PEMBAYARAN</div>
+                {payMethods.map(pm=>(
+                  <div key={pm.id} onClick={()=>setSelectedPay(pm.id)} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 13px",borderRadius:11,border:"2px solid "+(selectedPay===pm.id?"#18181b":"#e4e4e7"),cursor:"pointer"}}>
+                    <div style={{width:40,height:40,borderRadius:9,background:"white",border:"1px solid #e4e4e7",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden",padding:3}}>
+                      {LOGOS[pm.method_name]?<img src={LOGOS[pm.method_name]} alt={pm.bank_name} style={{width:"100%",height:"100%",objectFit:"contain"}}/>:<span style={{fontSize:18}}>💳</span>}
+                    </div>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:600,fontSize:13}}>{pm.bank_name}</div>
+                      {pm.account_number&&<div style={{fontSize:11,color:"#71717a",fontFamily:"monospace"}}>{pm.account_number} · {pm.holder_name}</div>}
+                    </div>
+                    <div style={{width:18,height:18,borderRadius:"50%",border:"2px solid "+(selectedPay===pm.id?"#18181b":"#d4d4d8"),display:"flex",alignItems:"center",justifyContent:"center"}}>{selectedPay===pm.id&&<div style={{width:8,height:8,borderRadius:"50%",background:"#18181b"}}/>}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{background:"#f0f9ff",border:"1.5px solid #bae6fd",borderRadius:12,padding:14}}>
+              <div style={{fontWeight:700,fontSize:13,marginBottom:4,color:"#0369a1"}}>📎 Link / Target (wajib isi)</div>
+              <textarea value={buyerLink} onChange={e=>setBuyerLink(e.target.value)} placeholder={"Link akun/konten yang mau ditingkatkan"} style={{width:"100%",border:"1.5px solid #bae6fd",borderRadius:8,padding:"8px 10px",fontSize:12,fontFamily:"inherit",outline:"none",resize:"none",minHeight:55,background:"white"}}/>
+            </div>
+            <div style={{background:"#fffbeb",border:"1px solid #fde68a",borderRadius:10,padding:"10px 13px",fontSize:12,color:"#b45309"}}>⚠️ Setelah konfirmasi, transfer ke metode yang dipilih. Admin verifikasi dan proses, sabar ya 🙂</div>
+            <button onClick={placeOrder} disabled={placing||(!useWallet&&!selectedPay)} style={{background:(!useWallet&&!selectedPay)?"#e4e4e7":"#18181b",color:(!useWallet&&!selectedPay)?"#a1a1aa":"white",border:"none",borderRadius:11,padding:"13px",fontSize:14,fontWeight:700,cursor:(!useWallet&&!selectedPay)?"not-allowed":"pointer",fontFamily:"inherit"}}>
+              {placing?"Memproses...":useWallet?"💰 Bayar dengan Wallet":"✅ Konfirmasi Pesanan"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   const [activePlatform, setActivePlatform] = useState("all");
   const [activeGroup, setActiveGroup] = useState("all");
@@ -792,15 +897,12 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
 
       {/* BUY NOW MODAL */}
       {buyNowOpen && buyNowProduct && (
-        <CartCheckout
-          cart={[{...buyNowProduct, qty:1}]}
-          setCart={()=>{}}
+        <BuyNowModal
+          product={buyNowProduct}
           user={user}
           onLogin={onLogin}
-          onDashboard={onDashboard}
+          onClose={()=>{setBuyNowOpen(false); setBuyNowProduct(null);}}
           onOrderDone={()=>{setBuyNowOpen(false); setBuyNowProduct(null); onDashboard();}}
-          isBuyNow={true}
-          onCloseBuyNow={()=>{setBuyNowOpen(false); setBuyNowProduct(null);}}
         />
       )}
 
