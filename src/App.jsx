@@ -146,7 +146,7 @@ html,body,#root{min-height:100vh;width:100%;}
 .sinput{border:1px solid rgba(255,255,255,0.4);border-radius:10px;padding:10px 16px 10px 40px;font-size:14px;background:rgba(255,255,255,0.9);outline:none;width:260px;font-family:inherit;backdrop-filter:blur(10px);}
 .sinput:focus{border-color:#18181b;}
 .sselect{border:1px solid rgba(255,255,255,0.4);border-radius:9px;padding:8px 12px;font-size:13px;background:rgba(255,255,255,0.9);outline:none;font-family:inherit;color:#18181b;cursor:pointer;}
-.card{background:rgba(255,255,255,0.95);border-radius:20px;border:1px solid rgba(255,255,255,0.5);backdrop-filter:blur(10px);overflow:hidden;transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s,border-color 0.25s;cursor:pointer;display:flex;flex-direction:column;position:relative;}
+.card{background:rgba(255,255,255,0.97);border-radius:14px;border:1px solid rgba(255,255,255,0.6);overflow:hidden;transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s,border-color 0.25s;cursor:pointer;display:flex;flex-direction:column;position:relative;}
 .card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.8);}
 .cthumb{height:105px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
 .cthumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.06) 100%);pointer-events:none;}
@@ -690,37 +690,39 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
               const inCart = cart.find(c => c.id===p.id);
               return (
                 <div key={p.id} className="card">
-                  <div className="cthumb" style={{background:"linear-gradient(135deg,"+plat.color+"22 0%,"+plat.color+"11 50%,"+plat.color+"33 100%)",position:"relative",overflow:"hidden"}}>
-                    {/* Decorative circles */}
-                    <div style={{position:"absolute",width:120,height:120,borderRadius:"50%",background:plat.color+"15",top:-30,right:-30,pointerEvents:"none"}} />
-                    <div style={{position:"absolute",width:80,height:80,borderRadius:"50%",background:plat.color+"20",bottom:-20,left:-20,pointerEvents:"none"}} />
-                    <div style={{position:"absolute",width:50,height:50,borderRadius:"50%",background:plat.color+"12",top:"50%",right:"15%",pointerEvents:"none"}} />
-                    <div className="platform-icon-big" style={{transition:"transform 0.3s ease",position:"relative",zIndex:1,filter:"drop-shadow(0 4px 12px "+plat.color+"40)"}}>
-                      <PlatformIcon id={plat.id} size={48} />
-                    </div>
+                  <div className="cthumb" style={{background:"linear-gradient(145deg,"+plat.color+"30,"+plat.color+"10)",position:"relative",overflow:"hidden"}}>
+                    {/* Clean background */}
+                    <div style={{position:"absolute",width:"140%",height:"140%",borderRadius:"50%",background:"radial-gradient(circle,"+plat.color+"20 0%,transparent 70%)",top:"-20%",left:"-20%",pointerEvents:"none"}} />
+                    {/* Tag badge - top left only */}
                     {p.tag && (
-                      <span className="tbadge" style={{background:tagColors[p.tag]||"#18181b"}}>
+                      <span className="tbadge" style={{background:tagColors[p.tag]||"#18181b",fontSize:9,padding:"3px 7px"}}>
                         {p.tag==="Terlaris"?"🔥":p.tag==="Baru"?"✨":p.tag==="Populer"?"⭐":p.tag==="Diskon"?"🏷️":"👑"} {p.tag}
                       </span>
                     )}
-                    <div className="ppip" style={{background:plat.bg+"ee",color:plat.color,border:"1px solid "+plat.border}}>
-                      <PlatformIcon id={p.platform} size={13} />
-                      <span style={{fontSize:10.5,fontWeight:700}}>{plat.label}</span>
-                    </div>
+                    {/* Wishlist - top right */}
                     <button className={"wbtn"+(wishlist.includes(p.id)?" active":"")} onClick={e=>{e.stopPropagation();setWishlist(w=>w.includes(p.id)?w.filter(x=>x!==p.id):[...w,p.id]);}}>
                       {wishlist.includes(p.id)?"❤️":"🤍"}
                     </button>
+                    {/* Platform icon - centered, big & clean */}
+                    <div className="platform-icon-big" style={{transition:"transform 0.3s ease",position:"relative",zIndex:1,filter:"drop-shadow(0 2px 8px "+plat.color+"50)"}}>
+                      <PlatformIcon id={plat.id} size={52} />
+                    </div>
+                  </div>
+                  {/* Platform label - below thumbnail, not overlapping */}
+                  <div style={{padding:"5px 10px 0",display:"flex",alignItems:"center",gap:4}}>
+                    <PlatformIcon id={p.platform} size={11} />
+                    <span style={{fontSize:10,fontWeight:700,color:plat.color}}>{plat.label}</span>
                   </div>
                   <div className="cbody">
-                    <div style={{fontSize:11.5,fontWeight:700,lineHeight:1.35,color:"#18181b",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.name}</div>
-                    {p.description && <div style={{fontSize:10.5,color:"#71717a",lineHeight:1.4,flex:1,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.description}</div>}
+                    <div style={{fontSize:11.5,fontWeight:700,lineHeight:1.35,color:"#1a1a2e",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.name}</div>
+                    {p.description && <div style={{fontSize:10.5,color:"#52525b",lineHeight:1.4,display:"-webkit-box",WebkitLineClamp:1,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.description}</div>}
                     <div style={{display:"flex",alignItems:"center",gap:3,marginTop:3}}>
                       <StarRow rating={p.rating} />
-                      <span style={{fontSize:10,color:"#a1a1aa"}}>{p.rating}</span>
+                      <span style={{fontSize:10,color:"#71717a"}}>{p.rating}</span>
                     </div>
 
                     <div className="prow">
-                      <span className="ptxt" style={{color:plat.color}}>{formatRp(p.price)}</span>
+                      <span className="ptxt" style={{color:plat.color,fontWeight:800}}>{formatRp(p.price)}</span>
                       {!(role==="owner"||role==="admin") && (
                         <button className={"cbtn"+(inCart?" added":"")}
                           style={inCart?{}:{background:"linear-gradient(135deg,"+plat.color+","+plat.color+"cc)"}}
