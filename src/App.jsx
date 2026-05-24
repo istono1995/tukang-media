@@ -191,9 +191,9 @@ html{-webkit-text-size-adjust:100%;}
 function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings, onHome }) {
   const ss = siteSettings || {site_name:"tukangmedia",primary_color:"#2563eb",logo_url:""};
   return (
-    <nav style={{background:"rgba(255,255,255,0.85)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.2)",padding:"0 28px",height:60,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 20px rgba(0,0,0,0.1)"}}>
+    <nav style={{background:"rgba(15,15,35,0.75)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"0 28px",height:60,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:100}}>
       <div style={{display:"flex",alignItems:"center",gap:28}}>
-        <div onClick={onHome} style={{fontFamily:"'DM Serif Display',serif",fontSize:20,letterSpacing:-0.5,cursor:"pointer"}}>
+        <div onClick={onHome} style={{fontFamily:"'DM Serif Display',serif",fontSize:20,letterSpacing:-0.5,cursor:"pointer",color:"white"}}>
               {ss.logo_url ? <img src={ss.logo_url} alt={ss.site_name} style={{height:36,objectFit:"contain"}} /> : <>tukang<span style={{color:ss.primary_color||"#2563eb"}}>media</span></>}
             </div>
         <div style={{display:"flex",gap:18}}>
@@ -597,17 +597,17 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   const getFaq = () => { try { return JSON.parse(ss.faq||"[]"); } catch { return []; } };
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
       <style>{STYLES}</style>
       {/* ANNOUNCEMENT BAR */}
       {ss.announcement_active && ss.announcement && (
-        <div style={{background:ss.announcement_color||"#2563eb",color:"white",textAlign:"center",padding:"9px 20px",fontSize:13,fontWeight:500}}>
+        <div style={{background:ss.announcement_color||"#2563eb",color:"white",width:"100%",textAlign:"center",padding:"9px 20px",fontSize:13,fontWeight:500}}>
           {ss.announcement}
         </div>
       )}
       <Navbar user={user} role={role} onLogin={onLogin} onDashboard={onDashboard} cart={cart} setCart={setCart} siteSettings={siteSettings} onHome={()=>window.scrollTo({top:0,behavior:"smooth"})} />
 
-      <div style={{maxWidth:1160,margin:"0 auto",padding:"28px 20px 60px"}}>
+      <div style={{maxWidth:1160,margin:"0 auto",padding:"24px 20px 60px"}}>
         <div style={{marginBottom:24}}>
           <p style={{fontSize:11.5,fontWeight:700,letterSpacing:1.5,color:ss.primary_color||"#60a5fa",textTransform:"uppercase",marginBottom:5}}>{ss.hero_badge||"Marketplace Digital"}</p>
           <h1 style={{fontFamily:"'DM Serif Display',serif",fontSize:34,fontWeight:400,lineHeight:1.15,letterSpacing:-0.8,color:"white",textShadow:"0 2px 20px rgba(0,0,0,0.3)"}}>
@@ -848,7 +848,7 @@ function AuthPage({ onBack }) {
   );
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
       <style>{STYLES}</style>
       <nav style={{background:"rgba(255,255,255,0.9)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.15)",padding:"0 28px",height:58,display:"flex",alignItems:"center",gap:12,position:"sticky",top:0}}>
         <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#52525b"}}>←</button>
@@ -1645,7 +1645,7 @@ function OwnerDashboard({ user, onBack }) {
   const paidOrders = orders.filter(o=>paidStatuses.includes(o.status)).length;
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
       <style>{STYLES}</style>
       <nav style={{background:"#18181b",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -1990,7 +1990,7 @@ function AdminDashboard({ user, onBack }) {
   };
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
       <style>{STYLES}</style>
       <nav style={{background:"#1e3a5f",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -2570,7 +2570,7 @@ function BuyerDashboard({ user, onBack }) {
   const groups = getGroups();
 
   return (
-    <div style={{minHeight:"100vh",background:"transparent"}}>
+    <div style={{minHeight:"100vh",background:"transparent",color:"inherit"}}>
       <style>{STYLES}</style>
       <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
