@@ -248,7 +248,10 @@ function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings,
 // ============================================================
 function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }) {
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState("cart"); // cart | checkout | success
+  // If isBuyNow, auto-open at checkout step
+  const [step, setStep] = useState(isBuyNow ? "checkout" : "cart");
+  // Auto-open panel for buyNow
+  useEffect(() => { if (isBuyNow) setOpen(true); }, [isBuyNow]); // cart | checkout | success
   const [payMethods, setPayMethods] = useState([]);
   const [selectedPay, setSelectedPay] = useState(null);
   const [placing, setPlacing] = useState(false);
@@ -346,14 +349,14 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
     <>
       {/* CART BUTTON */}
       <button onClick={() => { if (!user) return onLogin(); setOpen(true); setStep("cart"); }}
-        style={{position:"relative",background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:9,padding:"7px 13px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>
+        id="cart-btn" style={{position:"relative",background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:9,padding:"7px 13px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>
         🛒
         {cart.length > 0 && <span style={{position:"absolute",top:-6,right:-6,background:"#2563eb",color:"white",borderRadius:"50%",width:18,height:18,fontSize:10,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>{cart.reduce((s,p)=>s+(p.qty||1),0)}</span>}
       </button>
 
       {/* OVERLAY */}
       {open && (
-        <div style={{position:"fixed",inset:0,zIndex:200}} onClick={()=>setOpen(false)}>
+        <div style={{position:"fixed",inset:0,zIndex:200}} onClick={()=>{ setOpen(false); if(onCloseBuyNow) onCloseBuyNow(); }}>
           {/* BACKDROP */}
           <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(2px)"}} />
 
@@ -581,6 +584,8 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
   const [cart, setCart] = useState(() => {
     try { const saved = localStorage.getItem("tm_cart"); return saved ? JSON.parse(saved) : []; } catch { return []; }
   });
+  const [buyNowOpen, setBuyNowOpen] = useState(false);
+  const [buyNowProduct, setBuyNowProduct] = useState(null);
 
   // Sync cart ke localStorage setiap kali berubah
   useEffect(() => {
@@ -612,6 +617,12 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
       setToast('"'+p.name+'" ditambahkan ke keranjang');
       setTimeout(() => setToast(null), 2500);
     }
+  };
+
+  const handleBuyNow = (p) => {
+    if (!user) { onLogin(); return; }
+    setBuyNowProduct(p);
+    setBuyNowOpen(true);
   };
 
   const currentPlat = platforms.find(p => p.id===activePlatform);
@@ -739,14 +750,24 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
                       <span style={{fontSize:9.5,color:"#71717a"}}>{p.rating}</span>
                     </div>
 
-                    <div className="prow">
-                      <span className="ptxt" style={{color:plat.color,fontWeight:800}}>{formatRp(p.price)}</span>
+                    <div className="prow" style={{gap:4}}>
+                      <span className="ptxt" style={{color:plat.color,fontWeight:800,fontSize:12}}>{formatRp(p.price)}</span>
                       {!(role==="owner"||role==="admin") && (
-                        <button className={"cbtn"+(inCart?" added":"")}
-                          style={inCart?{}:{background:"linear-gradient(135deg,"+plat.color+","+plat.color+"cc)"}}
-                          onClick={() => user ? addToCart(p) : onLogin()}>
-                          {inCart?"✓ Keranjang":"+ Keranjang"}
-                        </button>
+                        <div style={{display:"flex",gap:4,flexShrink:0}}>
+                          {/* Cart icon button */}
+                          <button
+                            title="Tambah ke keranjang"
+                            style={{background:inCart?"#166534":"rgba(0,0,0,0.08)",color:inCart?"white":"#18181b",border:"none",borderRadius:7,padding:"5px 8px",fontSize:13,cursor:"pointer",flexShrink:0,lineHeight:1}}
+                            onClick={e=>{e.stopPropagation(); user ? addToCart(p) : onLogin();}}>
+                            {inCart ? "✓" : "🛒"}
+                          </button>
+                          {/* Beli Langsung button */}
+                          <button
+                            style={{background:"linear-gradient(135deg,"+plat.color+","+plat.color+"bb)",color:"white",border:"none",borderRadius:7,padding:"5px 9px",fontSize:10,fontWeight:700,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap",boxShadow:"0 2px 6px "+plat.color+"40"}}
+                            onClick={e=>{e.stopPropagation(); handleBuyNow(p);}}>
+                            ⚡ Beli
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -763,6 +784,20 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
         )}
       </div>
       {toast && <div className="toast">{toast}</div>}
+
+      {/* BUY NOW MODAL */}
+      {buyNowOpen && buyNowProduct && (
+        <CartCheckout
+          cart={[{...buyNowProduct, qty:1}]}
+          setCart={()=>{}}
+          user={user}
+          onLogin={onLogin}
+          onDashboard={onDashboard}
+          onOrderDone={()=>{setBuyNowOpen(false); setBuyNowProduct(null); onDashboard();}}
+          isBuyNow={true}
+          onCloseBuyNow={()=>{setBuyNowOpen(false); setBuyNowProduct(null);}}
+        />
+      )}
 
       {/* TESTIMONI */}
       {ss.show_testimoni!==false && getTestimoni().length>0 && (
