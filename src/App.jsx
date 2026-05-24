@@ -247,11 +247,8 @@ function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings,
 // CART SIDEBAR + CHECKOUT
 // ============================================================
 function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }) {
-  const [open, setOpen] = useState(false);
-  // If isBuyNow, auto-open at checkout step
-  const [step, setStep] = useState(isBuyNow ? "checkout" : "cart");
-  // Auto-open panel for buyNow
-  useEffect(() => { if (isBuyNow) setOpen(true); }, [isBuyNow]); // cart | checkout | success
+  const [open, setOpen] = useState(isBuyNow ? true : false);
+  const [step, setStep] = useState(isBuyNow ? "checkout" : "cart"); // cart | checkout | success
   const [payMethods, setPayMethods] = useState([]);
   const [selectedPay, setSelectedPay] = useState(null);
   const [placing, setPlacing] = useState(false);
@@ -356,7 +353,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
 
       {/* OVERLAY */}
       {open && (
-        <div style={{position:"fixed",inset:0,zIndex:200}} onClick={()=>{ setOpen(false); if(onCloseBuyNow) onCloseBuyNow(); }}>
+        <div style={{position:"fixed",inset:0,zIndex:200}} onClick={()=>setOpen(false)}>
           {/* BACKDROP */}
           <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(2px)"}} />
 
