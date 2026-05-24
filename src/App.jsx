@@ -1765,17 +1765,48 @@ function OwnerDashboard({ user, onBack }) {
   const [cancelModal, setCancelModal] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => { 
+    fetchAll(); 
+    // Poll every 15s for new orders/messages
+    const interval = setInterval(() => fetchAll(true), 15000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const fetchAll = async () => {
-    setLoading(true);
-    const [{ data:p },{ data:o },{ data:u }] = await Promise.all([
+  const prevOrderCountRef = useRef(0);
+  const prevMsgCountRef = useRef(0);
+  const isFirstLoad = useRef(true);
+
+  const fetchAll = async (silent=false) => {
+    if (!silent) setLoading(true);
+    const [{ data:p },{ data:o },{ data:u },{ data:msgs }] = await Promise.all([
       supabase.from("products").select("*").order("created_at",{ascending:false}),
       supabase.from("orders").select("*").order("created_at",{ascending:false}),
       supabase.from("user_roles").select("*"),
+      supabase.from("order_messages").select("id").order("created_at",{ascending:false}).limit(100),
     ]);
-    setProducts(p||[]); setOrders(o||[]); setUsers(u||[]);
-    setLoading(false);
+    const newOrders = o||[];
+    const newMsgCount = msgs?.length||0;
+    
+    if (!isFirstLoad.current) {
+      // New order sound
+      if (newOrders.length > prevOrderCountRef.current) {
+        playSound("order");
+        const newCount = newOrders.length - prevOrderCountRef.current;
+        setToastMsg("🛒 "+newCount+" pesanan baru masuk!");
+        setTimeout(()=>setToastMsg(null), 4000);
+      }
+      // New message sound
+      if (newMsgCount > prevMsgCountRef.current) {
+        playSound("message");
+      }
+    } else {
+      isFirstLoad.current = false;
+    }
+    
+    prevOrderCountRef.current = newOrders.length;
+    prevMsgCountRef.current = newMsgCount;
+    setProducts(p||[]); setOrders(newOrders); setUsers(u||[]);
+    if (!silent) setLoading(false);
   };
 
   const handleSave = async (form) => {
@@ -3207,6 +3238,45 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
     </div>
   );
 }
+
+
+// ============================================================
+// NOTIFICATION SOUNDS (Web Audio API)
+// ============================================================
+const playSound = (type) => {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    if (type === "order") {
+      // Ding-dong sound for new order
+      const times = [0, 0.2, 0.4];
+      const freqs = [523, 659, 784]; // C5, E5, G5
+      times.forEach((t, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freqs[i];
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.3, ctx.currentTime + t);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.4);
+        osc.start(ctx.currentTime + t);
+        osc.stop(ctx.currentTime + t + 0.4);
+      });
+    } else if (type === "message") {
+      // Pop sound for new message
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.2);
+    }
+  } catch(e) {}
+};
 
 // ============================================================
 // APP ROOT
