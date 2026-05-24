@@ -135,6 +135,7 @@ html,body,#root{min-height:100vh;width:100%;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
 .nav-link{text-decoration:none;color:#71717a;font-size:14px;font-weight:500;transition:color 0.2s;cursor:pointer;background:none;border:none;font-family:inherit;padding:0;}
 .nav-link:hover{color:#18181b;}
 .platform-tab{display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);backdrop-filter:blur(10px);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.18s;color:rgba(255,255,255,0.85);font-family:inherit;white-space:nowrap;}
@@ -332,7 +333,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
     <>
       {/* CART BUTTON */}
       <button onClick={() => { if (!user) return onLogin(); setOpen(true); setStep("cart"); }}
-        style={{position:"relative",background:"none",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"7px 13px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"#18181b"}}>
+        style={{position:"relative",background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:9,padding:"7px 13px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>
         🛒
         {cart.length > 0 && <span style={{position:"absolute",top:-6,right:-6,background:"#2563eb",color:"white",borderRadius:"50%",width:18,height:18,fontSize:10,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>{cart.reduce((s,p)=>s+(p.qty||1),0)}</span>}
       </button>
@@ -344,7 +345,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
           <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(2px)"}} />
 
           {/* SIDEBAR */}
-          <div style={{position:"absolute",right:0,top:0,bottom:0,width:"min(420px,100vw)",background:"white",boxShadow:"-8px 0 32px rgba(0,0,0,0.12)",display:"flex",flexDirection:"column",animation:"slideIn 0.25s ease"}}
+          <div style={{position:"fixed",right:0,top:0,bottom:0,height:"100dvh",width:"min(460px,100vw)",background:"white",boxShadow:"-8px 0 40px rgba(0,0,0,0.25)",display:"flex",flexDirection:"column",animation:"slideIn 0.25s ease",zIndex:201}}
             onClick={e=>e.stopPropagation()}>
 
             {/* HEADER */}
@@ -356,7 +357,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
             </div>
 
             {/* CONTENT */}
-            <div style={{flex:1,overflowY:"auto",padding:24}}>
+            <div style={{flex:1,overflowY:"auto",padding:24,minHeight:0}}>
 
               {/* STEP: CART */}
               {step==="cart" && (
@@ -517,7 +518,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
 
             {/* FOOTER */}
             {step!=="success" && cart.length>0 && (
-              <div style={{padding:"16px 24px",borderTop:"1.5px solid #f0f0f0",background:"white"}}>
+              <div style={{padding:"16px 24px",borderTop:"1.5px solid #f0f0f0",background:"white",flexShrink:0}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
                   <span style={{fontSize:13,color:"#71717a"}}>{cartCount} produk</span>
                   <span style={{fontFamily:"'DM Serif Display',serif",fontSize:20,fontWeight:400}}>{formatRp(total)}</span>
