@@ -403,10 +403,10 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
                 <div style={{display:"flex",flexDirection:"column",gap:16}}>
                   {/* Order summary */}
                   <div style={{background:"#f8fafc",borderRadius:12,padding:16}}>
-                    <div style={{fontWeight:700,fontSize:13,marginBottom:10,color:"#52525b"}}>RINGKASAN PESANAN</div>
+                    <div style={{fontWeight:700,fontSize:13,marginBottom:10,color:"rgba(255,255,255,0.75)"}}>RINGKASAN PESANAN</div>
                     {cart.map(p => (
                       <div key={p.id} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:6}}>
-                        <span style={{color:"#52525b"}}>{p.name} x{p.qty||1}</span>
+                        <span style={{color:"rgba(255,255,255,0.75)"}}>{p.name} x{p.qty||1}</span>
                         <span style={{fontWeight:600}}>{formatRp(p.price*(p.qty||1))}</span>
                       </div>
                     ))}
@@ -435,7 +435,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
 
                   {/* Payment methods */}
                   {!useWallet && <div>
-                    <div style={{fontWeight:700,fontSize:13,marginBottom:10,color:"#52525b"}}>PILIH METODE PEMBAYARAN</div>
+                    <div style={{fontWeight:700,fontSize:13,marginBottom:10,color:"rgba(255,255,255,0.75)"}}>PILIH METODE PEMBAYARAN</div>
                     {payMethods.length===0 ? (
                       <div style={{textAlign:"center",padding:20,color:"#a1a1aa",fontSize:13,background:"#f8fafc",borderRadius:10}}>Belum ada metode pembayaran tersedia</div>
                     ) : (
@@ -1015,7 +1015,7 @@ function AuthPage({ onBack }) {
     <div style={{minHeight:"100vh",background:"transparent",color:"inherit",width:"100%",overflowX:"hidden"}}>
       <style>{STYLES}</style>
       <nav style={{background:"rgba(255,255,255,0.9)",backdropFilter:"blur(20px)",WebkitBackdropFilter:"blur(20px)",borderBottom:"1px solid rgba(255,255,255,0.15)",padding:"0 28px",height:58,display:"flex",alignItems:"center",gap:12,position:"sticky",top:0}}>
-        <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#52525b"}}>←</button>
+        <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"rgba(255,255,255,0.75)"}}>←</button>
         <div onClick={onBack} style={{fontFamily:"'DM Serif Display',serif",fontSize:18,cursor:"pointer"}}>tukang<span style={{color:"#2563eb"}}>media</span></div>
       </nav>
       <div style={{display:"flex",alignItems:"center",justifyContent:"center",padding:"40px 20px",minHeight:"calc(100vh - 58px)"}}>
@@ -1640,7 +1640,7 @@ function OwnerPaymentTab() {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
         <div>
           <div style={{fontWeight:700,fontSize:16}}>💳 Metode Pembayaran</div>
-          <div style={{fontSize:12,color:"#71717a",marginTop:2}}>Kelola semua metode pembayaran aktif di toko</div>
+          <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:2}}>Kelola semua metode pembayaran aktif di toko</div>
         </div>
         <button onClick={openAdd} style={{background:"#18181b",color:"white",border:"none",borderRadius:9,padding:"9px 18px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>+ Tambah Metode</button>
       </div>
@@ -1697,7 +1697,7 @@ function OwnerPaymentTab() {
               <div style={{gridColumn:"1 / -1"}}>
                 <label style={{fontSize:12,fontWeight:600,display:"block",marginBottom:5}}>URL Gambar QRIS</label>
                 <input className="dinput" placeholder="https://... (upload ke Google Drive lalu paste link)" value={form.qris_url} onChange={e=>setF("qris_url",e.target.value)} />
-                <div style={{fontSize:11,color:"#71717a",marginTop:4}}>Upload gambar QRIS ke Google Drive → klik kanan → Dapatkan link → Izinkan semua orang → paste di sini.</div>
+                <div style={{fontSize:11,color:"rgba(255,255,255,0.55)",marginTop:4}}>Upload gambar QRIS ke Google Drive → klik kanan → Dapatkan link → Izinkan semua orang → paste di sini.</div>
               </div>
             )}
           </div>
@@ -1884,11 +1884,11 @@ function OwnerDashboard({ user, onBack }) {
             {icon:"✅",label:"Pesanan Selesai",value:doneOrders,color:"#16a34a",sub:orders.filter(o=>o.status==="processing").length+" sedang proses"},
             {icon:"💰",label:"Total Pendapatan",value:formatRp(totalRevenue),color:"#b45309",sub:null},
           ].map(s => (
-            <div key={s.label} style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:"18px 20px"}}>
+            <div key={s.label} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:14,padding:"18px 20px"}}>
               <div style={{fontSize:24,marginBottom:6}}>{s.icon}</div>
               <div style={{fontFamily:"'DM Serif Display',serif",fontSize:s.value.toString().length>8?16:22,color:s.color}}>{s.value}</div>
-              <div style={{fontSize:12,color:"#71717a",marginTop:2}}>{s.label}</div>
-              {s.sub && <div style={{fontSize:11,color:"#a1a1aa",marginTop:3}}>{s.sub}</div>}
+              <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:2}}>{s.label}</div>
+              {s.sub && <div style={{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:3}}>{s.sub}</div>}
             </div>
           ))}
         </div>
@@ -1899,7 +1899,7 @@ function OwnerDashboard({ user, onBack }) {
             {icon:"🗓️",label:"Pendapatan Bulan Ini",value:formatRp(monthRevenue),color:"#7c3aed",bg:"#fdf4ff"},
             {icon:"💎",label:"Total Keseluruhan",value:formatRp(totalRevenue),color:"#b45309",bg:"#fffbeb"},
           ].map(s => (
-            <div key={s.label} style={{background:s.bg,border:"1.5px solid #f0f0f0",borderRadius:12,padding:"14px 18px",display:"flex",alignItems:"center",gap:12}}>
+            <div key={s.label} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:12,padding:"14px 18px",display:"flex",alignItems:"center",gap:12}}>
               <div style={{fontSize:28}}>{s.icon}</div>
               <div>
                 <div style={{fontFamily:"'DM Serif Display',serif",fontSize:18,color:s.color,fontWeight:700}}>{s.value}</div>
@@ -1912,7 +1912,7 @@ function OwnerDashboard({ user, onBack }) {
         {/* TABS */}
         <div style={{borderBottom:"1.5px solid #f0f0f0",marginBottom:24,display:"flex",gap:4,overflowX:"auto"}}>
           {[["overview","📊 Overview"],["products","📦 Produk"],["orders","🛒 Pesanan"],["users","👥 Kelola User"],["website","🌐 Website"],["settings","💳 Pembayaran"]].map(([id,label]) => (
-            <button key={id} className={"dtab"+(tab===id?" active":"")} onClick={()=>setTabP(id)}>{label}</button>
+            <button key={id} className={"dtab"+(tab===id?" active":"")} style={{color:tab===id?"white":"rgba(255,255,255,0.7)"}} onClick={()=>setTabP(id)}>{label}</button>
           ))}
         </div>
 
@@ -1980,7 +1980,7 @@ function OwnerDashboard({ user, onBack }) {
         {/* ORDERS */}
         {tab==="orders" && (
           <div>
-            <div style={{fontWeight:700,fontSize:16,marginBottom:18}}>Semua Pesanan ({orders.length})</div>
+            <div style={{fontWeight:700,fontSize:16,marginBottom:18,color:"white"}}>Semua Pesanan ({orders.length})</div>
             {orders.length===0 ? (
               <div style={{textAlign:"center",padding:60,color:"#a1a1aa"}}>
                 <div style={{fontSize:40,marginBottom:12}}>🛒</div>
@@ -1990,7 +1990,7 @@ function OwnerDashboard({ user, onBack }) {
           <div>
           <div style={{marginBottom:16,position:"relative"}}>
             <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:13,color:"#a1a1aa"}}>🔍</span>
-            <input className="dinput" placeholder="Cari kode pesanan atau email..." style={{paddingLeft:36}}
+            <input className="dinput" style={{background:"rgba(255,255,255,0.1)",color:"white",borderColor:"rgba(255,255,255,0.2)"}} placeholder="Cari kode pesanan atau email..." style={{paddingLeft:36}}
               onChange={e => {
                 const q = e.target.value.toLowerCase();
                 document.querySelectorAll(".order-row").forEach(r => {
@@ -2000,10 +2000,10 @@ function OwnerDashboard({ user, onBack }) {
           </div>
           {orders.map(o => (
               <div key={o.id} style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:12,marginBottom:10,overflow:"hidden"}}>
-                <div className="oitem order-row" style={{border:"none",borderRadius:0,marginBottom:0}}>
+                <div className="oitem order-row" style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:10,marginBottom:8}} style={{border:"none",borderRadius:0,marginBottom:0}}>
                 <div style={{flex:1}}>
                   <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
-                    {o.order_code && <span style={{fontFamily:"monospace",fontSize:11,background:"#f4f4f5",padding:"1px 7px",borderRadius:5,fontWeight:700,color:"#52525b"}}>{o.order_code}</span>}
+                    {o.order_code && <span style={{fontFamily:"monospace",fontSize:11,background:"#f4f4f5",padding:"1px 7px",borderRadius:5,fontWeight:700,color:"rgba(255,255,255,0.75)"}}>{o.order_code}</span>}
                     <div style={{fontWeight:600,fontSize:14}}>{o.product_name}</div>
                   </div>
                   <div style={{fontSize:11,color:"#71717a"}}>{o.user_email} · {new Date(o.created_at).toLocaleDateString("id-ID")} · x{o.quantity||1}</div>
@@ -2223,17 +2223,17 @@ function AdminDashboard({ user, onBack }) {
       <div style={{maxWidth:900,margin:"0 auto",padding:"28px 20px 60px"}}>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,marginBottom:28}}>
           {[{icon:"📦",label:"Total Produk",value:products.length},{icon:"🛒",label:"Total Pesanan",value:orders.length},{icon:"✅",label:"Pesanan Lunas",value:orders.filter(o=>o.status==="paid").length}].map(s => (
-            <div key={s.label} style={{background:"white",border:"1.5px solid #f0f0f0",borderRadius:14,padding:"18px 20px"}}>
+            <div key={s.label} style={{background:"rgba(255,255,255,0.12)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:14,padding:"18px 20px"}}>
               <div style={{fontSize:24,marginBottom:6}}>{s.icon}</div>
               <div style={{fontFamily:"'DM Serif Display',serif",fontSize:22}}>{s.value}</div>
-              <div style={{fontSize:12,color:"#71717a",marginTop:2}}>{s.label}</div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",marginTop:2}}>{s.label}</div>
             </div>
           ))}
         </div>
 
         <div style={{borderBottom:"1.5px solid #f0f0f0",marginBottom:24,display:"flex",gap:4}}>
           {[["products","📦 Produk"],["orders","🛒 Pesanan"]].map(([id,label]) => (
-            <button key={id} className={"dtab"+(tab===id?" active":"")} onClick={()=>setTab(id)}>{label}</button>
+            <button key={id} className={"dtab"+(tab===id?" active":"")} style={{color:tab===id?"white":"rgba(255,255,255,0.7)"}} onClick={()=>setTab(id)}>{label}</button>
           ))}
         </div>
 
@@ -2269,7 +2269,7 @@ function AdminDashboard({ user, onBack }) {
             <div style={{fontWeight:700,fontSize:16,marginBottom:18}}>Pesanan ({orders.length})</div>
             <div style={{marginBottom:16,position:"relative"}}>
               <span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",fontSize:13,color:"#a1a1aa"}}>🔍</span>
-              <input className="dinput" placeholder="Cari kode pesanan atau email..." style={{paddingLeft:36}}
+              <input className="dinput" style={{background:"rgba(255,255,255,0.1)",color:"white",borderColor:"rgba(255,255,255,0.2)"}} placeholder="Cari kode pesanan atau email..." style={{paddingLeft:36}}
                 onChange={e => {
                   const q = e.target.value.toLowerCase();
                   document.querySelectorAll(".admin-order-row").forEach(r => {
@@ -2287,7 +2287,7 @@ function AdminDashboard({ user, onBack }) {
               <div className="oitem admin-order-row" style={{border:"none",borderRadius:0,marginBottom:0}}>
                 <div style={{flex:1}}>
                   <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
-                    {o.order_code && <span style={{fontFamily:"monospace",fontSize:11,background:"#f4f4f5",padding:"1px 7px",borderRadius:5,fontWeight:700,color:"#52525b"}}>{o.order_code}</span>}
+                    {o.order_code && <span style={{fontFamily:"monospace",fontSize:11,background:"#f4f4f5",padding:"1px 7px",borderRadius:5,fontWeight:700,color:"rgba(255,255,255,0.75)"}}>{o.order_code}</span>}
                     <div style={{fontWeight:600,fontSize:14}}>{o.product_name}</div>
                   </div>
                   <div style={{fontSize:11,color:"#71717a"}}>{o.user_email} · {new Date(o.created_at).toLocaleDateString("id-ID")} · x{o.quantity||1}</div>
@@ -2472,7 +2472,7 @@ function WalletCard({ email, onBalanceLoaded }) {
         <div>
           <div style={{fontSize:11,fontWeight:600,color:"#a1a1aa",letterSpacing:1,marginBottom:4}}>SALDO WALLET</div>
           <div style={{fontFamily:"'DM Serif Display',serif",fontSize:32}}>{formatRp(balance)}</div>
-          <div style={{fontSize:11,color:"#71717a",marginTop:4}}>Bisa dipakai untuk belanja</div>
+          <div style={{fontSize:11,color:"rgba(255,255,255,0.55)",marginTop:4}}>Bisa dipakai untuk belanja</div>
         </div>
         <div style={{background:"rgba(255,255,255,0.1)",borderRadius:12,padding:"8px 14px",fontSize:12,fontWeight:600}}>💰 Wallet</div>
       </div>
@@ -2790,7 +2790,7 @@ function BuyerDashboard({ user, onBack }) {
       <style>{STYLES}</style>
       <nav style={{background:"white",borderBottom:"1.5px solid #f0f0f0",padding:"0 28px",height:58,display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
-          <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"#52525b"}}>←</button>
+          <button onClick={onBack} style={{background:"none",border:"none",fontSize:18,cursor:"pointer",color:"rgba(255,255,255,0.75)"}}>←</button>
           <div style={{fontFamily:"'DM Serif Display',serif",fontSize:18}}>tukang<span style={{color:"#2563eb"}}>media</span></div>
         </div>
         <div style={{fontSize:12,color:"#71717a"}}>{user.email}</div>
@@ -2838,7 +2838,7 @@ function BuyerDashboard({ user, onBack }) {
             </div>
             <div style={{marginTop:10,display:"flex",gap:6,flexWrap:"wrap"}}>
               {g.groupOrders.slice(0,3).map(o => (
-                <span key={o.id} style={{background:"#f4f4f5",borderRadius:6,padding:"2px 8px",fontSize:11,color:"#52525b"}}>{o.product_name?.substring(0,20)}{o.product_name?.length>20?"...":""}</span>
+                <span key={o.id} style={{background:"#f4f4f5",borderRadius:6,padding:"2px 8px",fontSize:11,color:"rgba(255,255,255,0.75)"}}>{o.product_name?.substring(0,20)}{o.product_name?.length>20?"...":""}</span>
               ))}
               {g.groupOrders.length>3 && <span style={{background:"#f4f4f5",borderRadius:6,padding:"2px 8px",fontSize:11,color:"#a1a1aa"}}>+{g.groupOrders.length-3} lagi</span>}
             </div>
@@ -2854,7 +2854,7 @@ function BuyerDashboard({ user, onBack }) {
             onClick={e=>e.stopPropagation()}>
             {/* Header bar */}
             <div style={{position:"sticky",top:0,background:"white",borderBottom:"1px solid #f0f0f0",padding:"14px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",borderRadius:"20px 20px 0 0",zIndex:1}}>
-              <div style={{fontFamily:"monospace",fontWeight:700,fontSize:14,color:"#18181b"}}>{modal.code}</div>
+              <div style={{fontFamily:"monospace",fontWeight:700,fontSize:14,color:"white"}}>{modal.code}</div>
               <button onClick={()=>{setModal(null);setUploadMsg(null);}} style={{background:"#f4f4f5",border:"none",borderRadius:"50%",width:30,height:30,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
             </div>
             <div style={{padding:"16px 20px 24px"}}>
@@ -3093,7 +3093,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
           </div>
         </div>
         <div style={{display:"flex",gap:10,alignItems:"center"}}>
-          <button onClick={onLogin} style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:10,padding:"8px 18px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"#18181b"}}>Masuk</button>
+          <button onClick={onLogin} style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:10,padding:"8px 18px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>Masuk</button>
           <button onClick={onRegister} style={{background:primary,color:"white",border:"none",borderRadius:10,padding:"8px 20px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Daftar Gratis</button>
         </div>
       </nav>
