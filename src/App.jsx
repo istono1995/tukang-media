@@ -208,7 +208,7 @@ function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings,
               {ss.logo_url ? <img src={ss.logo_url} alt={ss.site_name} style={{height:36,objectFit:"contain"}} /> : <>tukang<span style={{color:ss.primary_color||"#2563eb"}}>media</span></>}
             </div>
         <div style={{display:"flex",gap:18}}>
-          {ss.navbar_tagline && <span style={{fontFamily:"'DM Serif Display',serif",fontSize:13,color:"#a1a1aa",fontStyle:"italic",letterSpacing:0.2}}>{ss.navbar_tagline}</span>}
+          {ss.navbar_tagline && <span style={{fontFamily:"'DM Serif Display',serif",fontSize:13,color:"rgba(255,255,255,0.5)",fontStyle:"italic",letterSpacing:0.2}}>{ss.navbar_tagline}</span>}
 
 
         </div>
@@ -229,7 +229,7 @@ function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings,
               </button>
             )}
             {role==="buyer" && (
-              <button onClick={onDashboard} style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"7px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Pesanan</button>
+              <button onClick={onDashboard} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:9,padding:"7px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>Pesanan</button>
             )}
             <button onClick={() => supabase.auth.signOut()} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:9,padding:"7px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>Keluar</button>
           </div>
@@ -708,17 +708,16 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
                       <PlatformIcon id={plat.id} size={52} />
                     </div>
                   </div>
-                  {/* Platform label - below thumbnail, not overlapping */}
-                  <div style={{padding:"5px 10px 0",display:"flex",alignItems:"center",gap:4}}>
-                    <PlatformIcon id={p.platform} size={11} />
-                    <span style={{fontSize:10,fontWeight:700,color:plat.color}}>{plat.label}</span>
-                  </div>
+
                   <div className="cbody">
-                    <div style={{fontSize:11.5,fontWeight:700,lineHeight:1.35,color:"#1a1a2e",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.name}</div>
-                    {p.description && <div style={{fontSize:10.5,color:"#52525b",lineHeight:1.4,display:"-webkit-box",WebkitLineClamp:1,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.description}</div>}
-                    <div style={{display:"flex",alignItems:"center",gap:3,marginTop:3}}>
+                    <div style={{display:"flex",alignItems:"center",gap:3,marginBottom:3}}>
+                      <PlatformIcon id={p.platform} size={10} />
+                      <span style={{fontSize:9.5,fontWeight:700,color:plat.color}}>{plat.label}</span>
+                    </div>
+                    <div style={{fontSize:11,fontWeight:700,lineHeight:1.35,color:"#18181b",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.name}</div>
+                    <div style={{display:"flex",alignItems:"center",gap:3,marginTop:2}}>
                       <StarRow rating={p.rating} />
-                      <span style={{fontSize:10,color:"#71717a"}}>{p.rating}</span>
+                      <span style={{fontSize:9.5,color:"#71717a"}}>{p.rating}</span>
                     </div>
 
                     <div className="prow">
