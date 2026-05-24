@@ -2843,12 +2843,20 @@ export default function App() {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchRole(session.user.email);
+        // Kalau user baru login dan masih di "home", arahkan ke marketplace
+        setPage(prev => {
+          if (prev==="home") {
+            localStorage.setItem("tm_page","marketplace");
+            return "marketplace";
+          }
+          return prev;
+        });
       } else {
         setRole(null);
         setLoadingRole(false);
         // Hanya redirect kalau memang lagi di halaman protected
         setPage(prev => {
-          if (protectedPages.includes(prev)) {
+          if (protectedPages.includes(prev)||prev==="marketplace") {
             localStorage.setItem("tm_page", "home");
             return "home";
           }
@@ -2893,8 +2901,9 @@ export default function App() {
   if (page==="buyer") return <BuyerDashboard user={user} onBack={() => goTo("marketplace")} />;
   if (page==="marketplace") return <MarketplaceListing user={user} role={role} onLogin={() => goTo("auth")} onDashboard={handleDashboard} />;
 
-  // Landing page untuk user yang belum login
-  if (!user) return <LandingPage siteSettings={siteSettings} onLogin={() => goTo("auth")} onRegister={() => { goTo("auth"); }} />;
+  // home atau tidak ada page: landing page kalau belum login, marketplace kalau sudah login
+  if (!user) return <LandingPage siteSettings={siteSettings} onLogin={() => goTo("auth")} onRegister={() => goTo("auth")} />;
 
+  // User sudah login tapi page masih "home" → arahkan ke marketplace
   return <MarketplaceListing user={user} role={role} onLogin={() => goTo("auth")} onDashboard={handleDashboard} />;
 }
