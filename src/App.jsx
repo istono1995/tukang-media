@@ -944,6 +944,7 @@ function ProductForm({ editData, onSave, onCancel, saving }) {
         </button>
         <button onClick={onCancel} style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"10px 20px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Batal</button>
       </div>
+      </div>
     </div>
   );
 }
