@@ -2832,8 +2832,8 @@ function BuyerDashboard({ user, onBack }) {
 
       <div style={{maxWidth:700,margin:"0 auto",padding:"28px 20px 60px"}}>
         <WalletCard email={user.email} />
-        <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:24,marginBottom:6}}>Pesanan Saya</h2>
-        <p style={{fontSize:13,color:"#71717a",marginBottom:24}}>Klik pesanan untuk lihat detail & instruksi pembayaran</p>
+        <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:24,marginBottom:6,color:"white",textShadow:"0 1px 8px rgba(0,0,0,0.4)"}}>Pesanan Saya</h2>
+        <p style={{fontSize:13,color:"rgba(255,255,255,0.8)",marginBottom:24,textShadow:"0 1px 4px rgba(0,0,0,0.3)"}}>Klik pesanan untuk lihat detail & instruksi pembayaran</p>
 
         {loading ? <div style={{textAlign:"center",padding:60,color:"#a1a1aa"}}>Memuat...</div> :
         groups.length===0 ? (
@@ -2844,7 +2844,7 @@ function BuyerDashboard({ user, onBack }) {
           </div>
         ) : groups.map(g => (
           <div key={g.groupId} onClick={() => setModal(g)}
-            style={{background:"white",border:"1.5px solid "+(g.status==="cancelled"?"#fecdd3":g.status==="done"?"#bbf7d0":g.status==="processing"?"#e9d5ff":g.status==="paid"?"#bfdbfe":"#f0f0f0"),borderRadius:14,padding:"16px 20px",marginBottom:12,cursor:"pointer",transition:"all 0.18s",boxShadow:"0 1px 4px rgba(0,0,0,0.04)"}}>
+            style={{background:"white",color:"#18181b",border:"1.5px solid "+(g.status==="cancelled"?"#fecdd3":g.status==="done"?"#bbf7d0":g.status==="processing"?"#e9d5ff":g.status==="paid"?"#bfdbfe":"#f0f0f0"),borderRadius:14,padding:"16px 20px",marginBottom:12,cursor:"pointer",transition:"all 0.18s",boxShadow:"0 1px 4px rgba(0,0,0,0.04)"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
               <div>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
@@ -2872,7 +2872,7 @@ function BuyerDashboard({ user, onBack }) {
             </div>
             <div style={{marginTop:10,display:"flex",gap:6,flexWrap:"wrap"}}>
               {g.groupOrders.slice(0,3).map(o => (
-                <span key={o.id} style={{background:"#f4f4f5",borderRadius:6,padding:"2px 8px",fontSize:11,color:"rgba(255,255,255,0.75)"}}>{o.product_name?.substring(0,20)}{o.product_name?.length>20?"...":""}</span>
+                <span key={o.id} style={{background:"#e4e4e7",borderRadius:6,padding:"2px 8px",fontSize:11,color:"#3f3f46",fontWeight:500}}>{o.product_name?.substring(0,20)}{o.product_name?.length>20?"...":""}</span>
               ))}
               {g.groupOrders.length>3 && <span style={{background:"#f4f4f5",borderRadius:6,padding:"2px 8px",fontSize:11,color:"#a1a1aa"}}>+{g.groupOrders.length-3} lagi</span>}
             </div>
