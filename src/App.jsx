@@ -830,23 +830,28 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
               const inCart = cart.find(c => c.id===p.id);
               return (
                 <div key={p.id} className="card">
-                  <div className="cthumb" style={{background:"linear-gradient(145deg,"+plat.color+"30,"+plat.color+"10)",position:"relative",overflow:"hidden"}}>
-                    {/* Clean background */}
-                    <div style={{position:"absolute",width:"140%",height:"140%",borderRadius:"50%",background:"radial-gradient(circle,"+plat.color+"20 0%,transparent 70%)",top:"-20%",left:"-20%",pointerEvents:"none"}} />
-                    {/* Tag badge - top left only */}
+                  <div className="cthumb" style={{background:p.image_url?"#000":"linear-gradient(145deg,"+plat.color+"30,"+plat.color+"10)",position:"relative",overflow:"hidden"}}>
+                    {p.image_url ? (
+                      // Custom product image
+                      <img src={p.image_url} alt={p.name} style={{width:"100%",height:"100%",objectFit:"cover",opacity:0.95}} />
+                    ) : (
+                      <>
+                        <div style={{position:"absolute",width:"140%",height:"140%",borderRadius:"50%",background:"radial-gradient(circle,"+plat.color+"20 0%,transparent 70%)",top:"-20%",left:"-20%",pointerEvents:"none"}} />
+                        <div className="platform-icon-big" style={{transition:"transform 0.3s ease",position:"relative",zIndex:1,filter:"drop-shadow(0 2px 8px "+plat.color+"50)"}}>
+                          <PlatformIcon id={plat.id} size={52} />
+                        </div>
+                      </>
+                    )}
+                    {/* Tag badge */}
                     {p.tag && (
                       <span className="tbadge" style={{background:tagColors[p.tag]||"#18181b",fontSize:9,padding:"3px 7px"}}>
                         {p.tag==="Terlaris"?"🔥":p.tag==="Baru"?"✨":p.tag==="Populer"?"⭐":p.tag==="Diskon"?"🏷️":"👑"} {p.tag}
                       </span>
                     )}
-                    {/* Wishlist - top right */}
+                    {/* Wishlist */}
                     <button className={"wbtn"+(wishlist.includes(p.id)?" active":"")} onClick={e=>{e.stopPropagation();setWishlist(w=>w.includes(p.id)?w.filter(x=>x!==p.id):[...w,p.id]);}}>
                       {wishlist.includes(p.id)?"❤️":"🤍"}
                     </button>
-                    {/* Platform icon - centered, big & clean */}
-                    <div className="platform-icon-big" style={{transition:"transform 0.3s ease",position:"relative",zIndex:1,filter:"drop-shadow(0 2px 8px "+plat.color+"50)"}}>
-                      <PlatformIcon id={plat.id} size={52} />
-                    </div>
                   </div>
 
                   <div className="cbody">
@@ -1131,7 +1136,7 @@ function AuthPage({ onBack }) {
 // PRODUCT FORM (shared owner+admin)
 // ============================================================
 function ProductForm({ editData, onSave, onCancel, saving }) {
-  const [form, setForm] = useState(editData || {name:"",platform:"youtube",price:"",description:"",tag:"",download_url:""});
+  const [form, setForm] = useState(editData || {name:"",platform:"youtube",price:"",description:"",tag:"",download_url:"",image_url:""});
   const set = (k,v) => setForm(f=>({...f,[k]:v}));
   return (
     <div style={{position:"fixed",inset:0,zIndex:500,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onCancel}>
@@ -1171,6 +1176,27 @@ function ProductForm({ editData, onSave, onCancel, saving }) {
       <div style={{marginBottom:16}}>
         <label style={{fontSize:12,fontWeight:600,display:"block",marginBottom:5}}>Deskripsi</label>
         <textarea className="dinput" rows={3} placeholder="Deskripsi produk..." value={form.description||""} onChange={e=>set("description",e.target.value)} style={{resize:"vertical"}} />
+      </div>
+      <div style={{marginBottom:16}}>
+        <label style={{fontSize:12,fontWeight:600,display:"block",marginBottom:5}}>🖼️ Gambar Produk (opsional)</label>
+        <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+          <div style={{flex:1}}>
+            <input className="dinput" value={form.image_url||""} onChange={e=>set("image_url",e.target.value)} placeholder="Paste URL gambar..." style={{marginBottom:6}} />
+            <label style={{display:"inline-flex",alignItems:"center",gap:6,background:"#f4f4f5",border:"1px solid #e4e4e7",borderRadius:8,padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer"}}>
+              📁 Upload Gambar
+              <input type="file" accept="image/*" style={{display:"none"}} onChange={async e=>{
+                const file = e.target.files[0]; if(!file) return;
+                const path = "products/"+Date.now()+"."+file.name.split(".").pop();
+                const {error} = await supabase.storage.from("media").upload(path, file, {upsert:true});
+                if(error){alert("Gagal: "+error.message);return;}
+                const {data:u} = supabase.storage.from("media").getPublicUrl(path);
+                set("image_url", u.publicUrl);
+              }} />
+            </label>
+          </div>
+          {form.image_url && <img src={form.image_url} alt="preview" style={{width:72,height:72,objectFit:"cover",borderRadius:10,border:"1.5px solid #e4e4e7",flexShrink:0}} />}
+        </div>
+        <div style={{fontSize:11,color:"#a1a1aa",marginTop:4}}>Kalau kosong, otomatis pakai icon platform</div>
       </div>
       <div style={{display:"flex",gap:10}}>
         <button onClick={()=>onSave(form)} disabled={saving||!form.name||!form.price} style={{background:"#18181b",color:"white",border:"none",borderRadius:9,padding:"10px 24px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",opacity:saving?0.6:1}}>
@@ -1812,9 +1838,9 @@ function OwnerDashboard({ user, onBack }) {
   const handleSave = async (form) => {
     setSaving(true);
     if (editData?.id) {
-      await supabase.from("products").update({name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,tag:form.tag||null,download_url:form.download_url||""}).eq("id",editData.id);
+      await supabase.from("products").update({name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,tag:form.tag||null,download_url:form.download_url||"",image_url:form.image_url||""}).eq("id",editData.id);
     } else {
-      await supabase.from("products").insert([{name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,seller:"tukangmedia",tag:form.tag||null,download_url:form.download_url||"",rating:5.0,downloads:"0",image_url:""}]);
+      await supabase.from("products").insert([{name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,seller:"tukangmedia",tag:form.tag||null,download_url:form.download_url||"",rating:5.0,downloads:"0",image_url:form.image_url||""}]);
     }
     setSaving(false); setShowForm(false); setEditData(null); fetchAll();
   };
@@ -2182,9 +2208,9 @@ function AdminDashboard({ user, onBack }) {
   const handleSave = async (form) => {
     setSaving(true);
     if (editData?.id) {
-      await supabase.from("products").update({name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,tag:form.tag||null,download_url:form.download_url||""}).eq("id",editData.id);
+      await supabase.from("products").update({name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,tag:form.tag||null,download_url:form.download_url||"",image_url:form.image_url||""}).eq("id",editData.id);
     } else {
-      await supabase.from("products").insert([{name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,seller:user.email,tag:form.tag||null,download_url:form.download_url||"",rating:5.0,downloads:"0",image_url:""}]);
+      await supabase.from("products").insert([{name:form.name,platform:form.platform,price:parseInt(form.price),description:form.description,seller:user.email,tag:form.tag||null,download_url:form.download_url||"",rating:5.0,downloads:"0",image_url:form.image_url||""}]);
     }
     setSaving(false); setShowForm(false); setEditData(null); fetchData();
   };
