@@ -126,7 +126,8 @@ body{
   0%{opacity:0.5;transform:scale(1)}
   100%{opacity:1;transform:scale(1.1)}
 }
-#root{position:relative;z-index:1;}
+#root{position:relative;z-index:1;background:transparent;}
+html,body,#root{min-height:100vh;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
@@ -135,6 +136,9 @@ body{
 .platform-tab{display:flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);backdrop-filter:blur(10px);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.18s;color:rgba(255,255,255,0.85);font-family:inherit;white-space:nowrap;}
 .platform-tab:hover{border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.2);}.platform-tab.active{color:white;border-color:transparent;box-shadow:0 4px 15px rgba(0,0,0,0.2);}
 .pscroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px;}.pscroll::-webkit-scrollbar{display:none;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:99px;}
 .sinput{border:1px solid rgba(255,255,255,0.4);border-radius:10px;padding:10px 16px 10px 40px;font-size:14px;background:rgba(255,255,255,0.9);outline:none;width:260px;font-family:inherit;backdrop-filter:blur(10px);}
 .sinput:focus{border-color:#18181b;}
 .sselect{border:1px solid rgba(255,255,255,0.4);border-radius:9px;padding:8px 12px;font-size:13px;background:rgba(255,255,255,0.9);outline:none;font-family:inherit;color:#18181b;cursor:pointer;}
@@ -220,7 +224,7 @@ function Navbar({ user, role, onLogin, onDashboard, cart, setCart, siteSettings,
             {role==="buyer" && (
               <button onClick={onDashboard} style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"7px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Pesanan</button>
             )}
-            <button onClick={() => supabase.auth.signOut()} style={{background:"none",border:"1.5px solid #e4e4e7",borderRadius:9,padding:"7px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Keluar</button>
+            <button onClick={() => supabase.auth.signOut()} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:9,padding:"7px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>Keluar</button>
           </div>
         ) : (
           <button onClick={onLogin} style={{background:"#18181b",color:"white",border:"none",borderRadius:9,padding:"8px 18px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Masuk</button>
@@ -2922,7 +2926,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
       </div>
 
       {/* FEATURES */}
-      <div style={{padding:"60px 5%",background:"white"}}>
+      <div style={{padding:"60px 5%",background:"rgba(255,255,255,0.05)"}}>
         <div style={{textAlign:"center",marginBottom:40}}>
           <div style={{fontSize:11,fontWeight:700,color:primary,letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>Keunggulan Kami</div>
           <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(22px,3vw,34px)",fontWeight:400}}>Kenapa Harus Pilih Kami?</h2>
@@ -2966,7 +2970,7 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
           const testimoni = JSON.parse(ss.testimoni||"[]");
           if (testimoni.length===0) return null;
           return (
-            <div style={{padding:"60px 5%",background:"white"}}>
+            <div style={{padding:"60px 5%",background:"rgba(255,255,255,0.05)"}}>
               <div style={{textAlign:"center",marginBottom:40}}>
                 <div style={{fontSize:11,fontWeight:700,color:primary,letterSpacing:2,textTransform:"uppercase",marginBottom:8}}>Testimoni</div>
                 <h2 style={{fontFamily:"'DM Serif Display',serif",fontSize:"clamp(22px,3vw,34px)",fontWeight:400}}>Apa Kata Mereka?</h2>
