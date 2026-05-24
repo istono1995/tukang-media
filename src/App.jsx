@@ -148,7 +148,7 @@ html,body,#root{min-height:100vh;width:100%;}
 .sselect{border:1px solid rgba(255,255,255,0.4);border-radius:9px;padding:8px 12px;font-size:13px;background:rgba(255,255,255,0.9);outline:none;font-family:inherit;color:#18181b;cursor:pointer;}
 .card{background:rgba(255,255,255,0.95);border-radius:20px;border:1px solid rgba(255,255,255,0.5);backdrop-filter:blur(10px);overflow:hidden;transition:transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s,border-color 0.25s;cursor:pointer;display:flex;flex-direction:column;position:relative;}
 .card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.8);}
-.cthumb{height:185px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.cthumb{height:105px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
 .cthumb::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,0.06) 100%);pointer-events:none;}
 .card:hover .platform-icon-big{transform:scale(1.15) rotate(-3deg) !important;}
 .wbtn{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:white;border:1.5px solid #e4e4e7;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:2;transition:transform 0.2s;}
@@ -156,15 +156,18 @@ html,body,#root{min-height:100vh;width:100%;}
 .wbtn.active{background:#fff1f2;border-color:#f43f5e;}
 .tbadge{position:absolute;top:12px;left:12px;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:800;color:white;letter-spacing:0.5px;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
 .ppip{position:absolute;bottom:12px;left:12px;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;z-index:2;backdrop-filter:blur(4px);}
-.cbody{padding:16px;flex:1;display:flex;flex-direction:column;gap:5px;}
-.prow{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:11px;border-top:1px solid #f4f4f5;}
-.ptxt{font-family:'DM Serif Display',serif;font-size:18px;color:#18181b;font-weight:400;}
-.cbtn{background:linear-gradient(135deg,#18181b,#3f3f46);color:white;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;letter-spacing:0.2px;}
+.cbody{padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:2px;}
+.prow{display:flex;align-items:center;justify-content:space-between;margin-top:4px;padding-top:5px;border-top:1px solid rgba(0,0,0,0.06);}
+.ptxt{font-family:'DM Sans',sans-serif;font-size:13px;color:#18181b;font-weight:700;}
+.cbtn{background:linear-gradient(135deg,#18181b,#3f3f46);color:white;border:none;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;}
 .cbtn:hover{background:linear-gradient(135deg,#27272a,#52525b);transform:scale(1.03);}
 .cbtn.added{background:linear-gradient(135deg,#166534,#15803d);}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
-@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:12px;}.cbody{padding:12px;}}
-@media(max-width:380px){.grid{grid-template-columns:1fr;}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
+@media(min-width:1100px){.grid{grid-template-columns:repeat(7,1fr);gap:10px;}}
+@media(max-width:1099px) and (min-width:768px){.grid{grid-template-columns:repeat(5,1fr);gap:10px;}}
+@media(max-width:767px) and (min-width:480px){.grid{grid-template-columns:repeat(3,1fr);gap:8px;}}
+@media(max-width:479px){.grid{grid-template-columns:repeat(2,1fr);gap:8px;}}
+@media(max-width:479px) .cbody{padding:8px;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#18181b;color:white;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;animation:fadeInUp 0.3s ease;white-space:nowrap;}
 .ainput{width:100%;border:1.5px solid #e4e4e7;border-radius:11px;padding:12px 14px;font-size:14px;background:white;outline:none;font-family:inherit;}
 .ainput:focus{border-color:#18181b;}
@@ -693,7 +696,7 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
                     <div style={{position:"absolute",width:80,height:80,borderRadius:"50%",background:plat.color+"20",bottom:-20,left:-20,pointerEvents:"none"}} />
                     <div style={{position:"absolute",width:50,height:50,borderRadius:"50%",background:plat.color+"12",top:"50%",right:"15%",pointerEvents:"none"}} />
                     <div className="platform-icon-big" style={{transition:"transform 0.3s ease",position:"relative",zIndex:1,filter:"drop-shadow(0 4px 12px "+plat.color+"40)"}}>
-                      <PlatformIcon id={plat.id} size={76} />
+                      <PlatformIcon id={plat.id} size={48} />
                     </div>
                     {p.tag && (
                       <span className="tbadge" style={{background:tagColors[p.tag]||"#18181b"}}>
@@ -709,19 +712,15 @@ function MarketplaceListing({ user, role, onLogin, onDashboard }) {
                     </button>
                   </div>
                   <div className="cbody">
-                    <div style={{fontSize:13.5,fontWeight:700,lineHeight:1.4,color:"#18181b"}}>{p.name}</div>
-                    {p.description && <div style={{fontSize:11.5,color:"#71717a",lineHeight:1.5,flex:1,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.description}</div>}
-                    <div style={{display:"flex",alignItems:"center",gap:5,marginTop:4}}>
+                    <div style={{fontSize:11.5,fontWeight:700,lineHeight:1.35,color:"#18181b",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.name}</div>
+                    {p.description && <div style={{fontSize:10.5,color:"#71717a",lineHeight:1.4,flex:1,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{p.description}</div>}
+                    <div style={{display:"flex",alignItems:"center",gap:3,marginTop:3}}>
                       <StarRow rating={p.rating} />
-                      <span style={{fontSize:11,color:"#a1a1aa",fontWeight:500}}>{p.rating}</span>
-                      {p.downloads>0 && <span style={{fontSize:11,color:"#a1a1aa",marginLeft:"auto"}}>⬇ {p.downloads}</span>}
+                      <span style={{fontSize:10,color:"#a1a1aa"}}>{p.rating}</span>
                     </div>
-                    {p.seller && <div style={{fontSize:11,color:"#a1a1aa",marginTop:2}}>oleh <span style={{color:plat.color,fontWeight:600}}>{p.seller}</span></div>}
+
                     <div className="prow">
-                      <div>
-                        <div style={{fontSize:10,color:"#a1a1aa",fontWeight:500,marginBottom:1}}>HARGA</div>
-                        <span className="ptxt" style={{color:plat.color}}>{formatRp(p.price)}</span>
-                      </div>
+                      <span className="ptxt" style={{color:plat.color}}>{formatRp(p.price)}</span>
                       {!(role==="owner"||role==="admin") && (
                         <button className={"cbtn"+(inCart?" added":"")}
                           style={inCart?{}:{background:"linear-gradient(135deg,"+plat.color+","+plat.color+"cc)"}}
