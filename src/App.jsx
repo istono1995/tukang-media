@@ -94,39 +94,29 @@ body{
 #animated-bg{
   position:fixed;
   top:0;left:0;right:0;bottom:0;
-  width:100vw;
-  height:100vh;
+  width:100vw;height:100vh;
   z-index:0;
-  background:linear-gradient(
-    -45deg,
-    #0f0f23,
-    #1a1a3e,
-    #0d2137,
-    #1a2a1a,
-    #2a1a0f,
-    #1a0f2a,
-    #0f1a2a
-  );
-  background-size:400% 400%;
-  animation:gradientShift 15s ease infinite;
+  transition:background 3s ease;
 }
-#animated-bg::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:radial-gradient(ellipse at 20% 50%,rgba(120,80,255,0.08) 0%,transparent 50%),
-             radial-gradient(ellipse at 80% 20%,rgba(0,180,255,0.06) 0%,transparent 50%),
-             radial-gradient(ellipse at 50% 80%,rgba(255,120,0,0.05) 0%,transparent 50%);
-  animation:orbs 20s ease-in-out infinite alternate;
+#stars-canvas{
+  position:fixed;
+  top:0;left:0;
+  width:100vw;height:100vh;
+  z-index:0;
+  pointer-events:none;
 }
 @keyframes gradientShift{
   0%{background-position:0% 50%}
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
-@keyframes orbs{
-  0%{opacity:0.5;transform:scale(1)}
-  100%{opacity:1;transform:scale(1.1)}
+@keyframes twinkle{
+  0%,100%{opacity:0.3}
+  50%{opacity:1}
+}
+@keyframes floatCloud{
+  0%{transform:translateX(-10%)}
+  100%{transform:translateX(110%)}
 }
 #root{position:relative;z-index:1;background:transparent;}
 html,body,#root{min-height:100vh;width:100%;}
@@ -386,7 +376,7 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
                     {cart.map(p => {
                       const plat = platforms.find(x=>x.id===p.platform)||platforms[0];
                       return (
-                        <div key={p.id} style={{display:"flex",gap:12,background:"rgba(255,255,255,0.04)",borderRadius:12,padding:14,border:"1.5px solid #f0f0f0"}}>
+                        <div key={p.id} style={{display:"flex",gap:12,background:"rgba(255,255,255,0.08)",borderRadius:12,padding:14,border:"1.5px solid #f0f0f0"}}>
                           <div style={{width:48,height:48,borderRadius:10,background:plat.bg,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                             <PlatformIcon id={plat.id} size={24} />
                           </div>
@@ -1012,7 +1002,7 @@ function AuthPage({ onBack }) {
   };
 
   if (done) return (
-    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"rgba(255,255,255,0.04)",textAlign:"center",padding:24}}>
+    <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"rgba(255,255,255,0.08)",textAlign:"center",padding:24}}>
       <style>{STYLES}</style>
       <div style={{fontSize:64,marginBottom:16}}>📧</div>
       <div style={{fontFamily:"'DM Serif Display',serif",fontSize:28,marginBottom:8}}>Email Terkirim!</div>
@@ -2705,7 +2695,7 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus, onC
 
       {/* Input area */}
       {canSend && !previewImg ? (
-        <div style={{padding:"10px 12px",borderTop:"1px solid #e4e4e7",background:"rgba(255,255,255,0.04)",display:"flex",gap:8,alignItems:"center"}}>
+        <div style={{padding:"10px 12px",borderTop:"1px solid #e4e4e7",background:"rgba(255,255,255,0.08)",display:"flex",gap:8,alignItems:"center"}}>
           {isAdmin && (
             <>
               <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFileSelect} />
@@ -3326,7 +3316,7 @@ export default function App() {
     });
   }, []);
 
-  // Inject animated background
+  // Dynamic sky background based on time
   useEffect(() => {
     let bg = document.getElementById("animated-bg");
     if (!bg) {
@@ -3334,7 +3324,118 @@ export default function App() {
       bg.id = "animated-bg";
       document.body.insertBefore(bg, document.body.firstChild);
     }
-    return () => {}; // keep it
+
+    // Create stars canvas
+    let canvas = document.getElementById("stars-canvas");
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+      canvas.id = "stars-canvas";
+      document.body.insertBefore(canvas, document.body.firstChild);
+    }
+
+    const updateSky = () => {
+      const h = new Date().getHours();
+      const m = new Date().getMinutes();
+      const timeVal = h + m/60;
+
+      // Sky gradients by time
+      let sky;
+      if (timeVal >= 5 && timeVal < 7) {
+        // Dawn
+        sky = "linear-gradient(to bottom, #1a1a3e 0%, #ff6b35 40%, #ffd700 70%, #87ceeb 100%)";
+      } else if (timeVal >= 7 && timeVal < 11) {
+        // Morning
+        sky = "linear-gradient(to bottom, #4facfe 0%, #87ceeb 40%, #b0e2ff 70%, #e8f4f8 100%)";
+      } else if (timeVal >= 11 && timeVal < 16) {
+        // Noon
+        sky = "linear-gradient(to bottom, #2980b9 0%, #6dd5fa 40%, #b8e4f9 100%)";
+      } else if (timeVal >= 16 && timeVal < 18) {
+        // Afternoon
+        sky = "linear-gradient(to bottom, #1e3c72 0%, #2a5298 30%, #f7971e 70%, #ffd200 100%)";
+      } else if (timeVal >= 18 && timeVal < 20) {
+        // Sunset
+        sky = "linear-gradient(to bottom, #0f0c29 0%, #302b63 30%, #ff6b6b 60%, #ffa500 100%)";
+      } else {
+        // Night
+        sky = "linear-gradient(to bottom, #0a0a1a 0%, #0d1b2a 40%, #1a1a3e 100%)";
+      }
+      bg.style.background = sky;
+
+      // Stars canvas (night/dawn)
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const showStars = timeVal < 6 || timeVal >= 19;
+      if (showStars) {
+        const starCount = 200;
+        for (let i = 0; i < starCount; i++) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height * 0.7;
+          const r = Math.random() * 1.5 + 0.3;
+          const opacity = Math.random() * 0.8 + 0.2;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${opacity})`;
+          ctx.fill();
+        }
+        // Big stars
+        for (let i = 0; i < 20; i++) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height * 0.5;
+          const size = Math.random() * 3 + 1;
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,220,0.9)`;
+          ctx.fill();
+          // Glow
+          const grd = ctx.createRadialGradient(x,y,0,x,y,size*4);
+          grd.addColorStop(0, "rgba(255,255,200,0.3)");
+          grd.addColorStop(1, "rgba(255,255,200,0)");
+          ctx.beginPath();
+          ctx.arc(x, y, size*4, 0, Math.PI * 2);
+          ctx.fillStyle = grd;
+          ctx.fill();
+        }
+        // Moon
+        const isDawn = timeVal < 6;
+        const moonX = isDawn ? canvas.width * 0.15 : canvas.width * 0.75;
+        ctx.beginPath();
+        ctx.arc(moonX, canvas.height*0.12, 28, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(255,255,220,0.95)";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(moonX+10, canvas.height*0.12, 22, 0, Math.PI*2);
+        ctx.fillStyle = showStars ? (timeVal < 6 ? "#0d1b2a" : "#0a0a1a") : "transparent";
+        ctx.fill();
+      }
+
+      // Sun (morning/noon/afternoon)
+      const showSun = timeVal >= 6 && timeVal < 18;
+      if (showSun) {
+        const sunProgress = (timeVal - 6) / 12;
+        const sunX = sunProgress * canvas.width;
+        const sunY = canvas.height * 0.08 + Math.sin(sunProgress * Math.PI) * (-canvas.height * 0.05);
+        const grd = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 60);
+        grd.addColorStop(0, "rgba(255,255,180,0.9)");
+        grd.addColorStop(0.3, "rgba(255,200,50,0.6)");
+        grd.addColorStop(1, "rgba(255,150,0,0)");
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 60, 0, Math.PI*2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, 22, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(255,255,180,0.95)";
+        ctx.fill();
+      }
+    };
+
+    updateSky();
+    const interval = setInterval(updateSky, 60000); // update every minute
+    window.addEventListener("resize", updateSky);
+    return () => { clearInterval(interval); window.removeEventListener("resize", updateSky); };
   }, []);
 
   // Halaman yang butuh login — home & auth bebas diakses siapapun
