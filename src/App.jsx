@@ -1314,6 +1314,7 @@ function OwnerSiteSettings() {
     {id:"faq", label:"❓ FAQ"},
     {id:"kontak", label:"📞 Kontak"},
     {id:"footer", label:"🔻 Footer"},
+    {id:"suara", label:"🔔 Notifikasi"},
   ];
 
   return (
@@ -1593,6 +1594,55 @@ function OwnerSiteSettings() {
             <div style={{marginTop:12,background:"#18181b",borderRadius:10,padding:"14px 20px",textAlign:"center"}}>
               <div style={{fontSize:12,color:"#a1a1aa"}}>{form.footer_text||"© 2025 tukangmedia. All rights reserved."}</div>
             </div>
+          </div>
+        )}
+
+        {/* NOTIFIKASI SUARA */}
+        {activeSection==="suara" && (
+          <div style={{background:"white",border:"1px solid rgba(0,0,0,0.08)",borderRadius:14,padding:24,color:"#18181b"}}>
+            <div style={{fontWeight:700,fontSize:15,marginBottom:4}}>🔔 Nada Notifikasi Kustom</div>
+            <div style={{fontSize:12,color:"#71717a",marginBottom:16}}>Upload nada dering sendiri untuk notifikasi. Format: MP3, WAV, OGG. Tersimpan di browser ini saja.</div>
+            {[
+              {key:"order", label:"🛒 Pesanan Baru", desc:"Bunyi saat ada pesanan masuk"},
+              {key:"message", label:"💬 Pesan Chat Baru", desc:"Bunyi saat ada pesan masuk di chat"},
+            ].map(({key, label, desc}) => {
+              const saved = (() => { try { return localStorage.getItem("tm_sound_"+key); } catch { return null; } })();
+              return (
+                <div key={key} style={{background:"#f8fafc",borderRadius:12,padding:16,marginBottom:12,border:"1.5px solid #e4e4e7"}}>
+                  <div style={{fontWeight:700,fontSize:13,marginBottom:2}}>{label}</div>
+                  <div style={{fontSize:11,color:"#71717a",marginBottom:12}}>{desc}</div>
+                  <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+                    <label style={{background:"#18181b",color:"white",borderRadius:8,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer",display:"inline-flex",alignItems:"center",gap:6}}>
+                      📁 Upload Nada
+                      <input type="file" accept="audio/*" style={{display:"none"}} onChange={e=>{
+                        const file = e.target.files[0]; if(!file) return;
+                        const reader = new FileReader();
+                        reader.onload = ev => {
+                          try {
+                            localStorage.setItem("tm_sound_"+key, ev.target.result);
+                            alert("✅ Nada '"+label+"' berhasil disimpan!");
+                          } catch(err) {
+                            alert("File terlalu besar. Gunakan file audio kecil (<1MB).");
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      }} />
+                    </label>
+                    <button onClick={()=>playSound(key)} style={{background:"#eff6ff",color:"#2563eb",border:"1px solid #bfdbfe",borderRadius:8,padding:"8px 14px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                      ▶ Test Suara
+                    </button>
+                    {saved && (
+                      <button onClick={()=>{ localStorage.removeItem("tm_sound_"+key); alert("Nada dihapus, kembali ke nada default."); }} style={{background:"#fff1f2",color:"#e11d48",border:"1px solid #fecdd3",borderRadius:8,padding:"8px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                        🗑️ Reset Default
+                      </button>
+                    )}
+                  </div>
+                  <div style={{marginTop:8,fontSize:11,color:saved?"#16a34a":"#a1a1aa",fontWeight:600}}>
+                    {saved?"✅ Nada kustom aktif — tekan 'Test Suara' untuk preview":"⚙️ Menggunakan nada default bawaan"}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -3301,14 +3351,26 @@ function LandingPage({ onLogin, onRegister, siteSettings }) {
 // ============================================================
 // NOTIFICATION SOUNDS (Web Audio API)
 // ============================================================
+// Custom sound URLs (stored in localStorage)
+const getSoundUrl = (type) => {
+  try { return localStorage.getItem("tm_sound_"+type) || null; } catch { return null; }
+};
+
 const playSound = (type) => {
   try {
+    // Try custom sound first
+    const customUrl = getSoundUrl(type);
+    if (customUrl) {
+      const audio = new Audio(customUrl);
+      audio.volume = 0.7;
+      audio.play().catch(()=>{});
+      return;
+    }
+    // Fallback to Web Audio API
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    
     if (type === "order") {
-      // Ding-dong sound for new order
       const times = [0, 0.2, 0.4];
-      const freqs = [523, 659, 784]; // C5, E5, G5
+      const freqs = [523, 659, 784];
       times.forEach((t, i) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -3321,7 +3383,6 @@ const playSound = (type) => {
         osc.stop(ctx.currentTime + t + 0.4);
       });
     } else if (type === "message") {
-      // Pop sound for new message
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
