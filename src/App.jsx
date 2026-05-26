@@ -282,6 +282,9 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
   const [buyerLink, setBuyerLink] = useState("");
   const [walletBalance, setWalletBalance] = useState(0);
   const [useWallet, setUseWallet] = useState(false);
+  const [proofUrl, setProofUrl] = useState("");
+  const [uploadingProof, setUploadingProof] = useState(false);
+  const [proofSent, setProofSent] = useState(false);
 
   const PAYMENT_LOGOS = {
     bca:     "https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg",
@@ -532,27 +535,67 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
                     <div style={{fontFamily:"'DM Serif Display',serif",fontSize:22,marginBottom:6}}>Pesanan Berhasil!</div>
                     <div style={{fontSize:13,color:"#71717a"}}>Pesanan kamu sudah tercatat</div>
                   </div>
-                  {/* Order Code Box */}
+                  {/* Order Code */}
                   <div style={{background:"#f0fdf4",border:"2px solid #16a34a",borderRadius:14,padding:"16px 20px",marginBottom:16,textAlign:"center"}}>
-                    <div style={{fontSize:11,fontWeight:700,color:"#16a34a",letterSpacing:1.5,marginBottom:6}}>KODE PESANAN KAMU</div>
-                    <div style={{fontFamily:"monospace",fontSize:26,fontWeight:700,color:"#18181b",letterSpacing:2}}>{lastOrderCode}</div>
-                    <div style={{fontSize:11,color:"#71717a",marginTop:6}}>Screenshot kode ini sebagai bukti pemesanan</div>
+                    <div style={{fontSize:11,fontWeight:700,color:"#16a34a",letterSpacing:1.5,marginBottom:6}}>KODE PESANAN</div>
+                    <div style={{fontFamily:"monospace",fontSize:22,fontWeight:700,color:"#18181b",letterSpacing:2}}>{lastOrderCode}</div>
                   </div>
                   {/* Total */}
                   <div style={{background:"#f8fafc",borderRadius:10,padding:"12px 16px",marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                    <span style={{fontSize:13,color:"#52525b",fontWeight:600}}>Total Pembayaran</span>
-                    <span style={{fontFamily:"'DM Serif Display',serif",fontSize:18,fontWeight:400}}>{formatRp(lastOrderTotal)}</span>
+                    <span style={{fontSize:13,color:"#52525b",fontWeight:600}}>Total Transfer</span>
+                    <span style={{fontFamily:"'DM Serif Display',serif",fontSize:18}}>{formatRp(lastOrderTotal)}</span>
                   </div>
-                  {/* Instructions */}
-                  <div style={{background:"#fffbeb",border:"1px solid #fde68a",borderRadius:10,padding:"12px 14px",marginBottom:20,fontSize:12,color:"#92400e",lineHeight:1.7}}>
-                    <div style={{fontWeight:700,marginBottom:4}}>📋 Langkah selanjutnya:</div>
-                    <div>1. Lakukan transfer sesuai metode yang dipilih</div>
-                    <div>2. Screenshot bukti transfer</div>
-                    <div>3. Kirim ke admin beserta <strong>kode pesanan {lastOrderCode}</strong></div>
-                    <div>4. Admin akan verifikasi dan kirim link download</div>
-                  </div>
-                  <button onClick={()=>{setOpen(false);setStep("cart");if(onOrderDone)onOrderDone();}} style={{width:"100%",background:"#18181b",color:"white",border:"none",borderRadius:10,padding:"12px 28px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-                    Tutup & Lihat Pesanan Saya →
+
+                  {/* UPLOAD BUKTI BAYAR */}
+                  {!useWallet && (
+                    <div style={{background:"#eff6ff",border:"1.5px solid #bfdbfe",borderRadius:14,padding:16,marginBottom:16}}>
+                      <div style={{fontWeight:700,fontSize:14,color:"#1d4ed8",marginBottom:4}}>📸 Upload Bukti Transfer</div>
+                      <div style={{fontSize:12,color:"#3b82f6",marginBottom:12,lineHeight:1.5}}>
+                        Setelah transfer, upload screenshot bukti bayar supaya admin bisa verifikasi lebih cepat!
+                      </div>
+                      {proofUrl ? (
+                        <div>
+                          <img src={proofUrl} alt="Bukti bayar" style={{width:"100%",borderRadius:10,maxHeight:200,objectFit:"contain",border:"1.5px solid #bfdbfe",background:"white"}} />
+                          <div style={{display:"flex",gap:8,marginTop:10}}>
+                            {!proofSent ? (
+                              <button onClick={async()=>{
+                                // Save proof to order
+                                await supabase.from("orders").update({proof_url:proofUrl}).eq("order_code",lastOrderCode);
+                                setProofSent(true);
+                              }} style={{flex:1,background:"#1d4ed8",color:"white",border:"none",borderRadius:9,padding:"10px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                                ✅ Kirim Bukti Bayar
+                              </button>
+                            ) : (
+                              <div style={{flex:1,background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:9,padding:"10px",fontSize:13,fontWeight:700,color:"#16a34a",textAlign:"center"}}>
+                                ✅ Bukti terkirim! Admin akan verifikasi segera.
+                              </div>
+                            )}
+                            {!proofSent && <button onClick={()=>setProofUrl("")} style={{background:"#fff1f2",color:"#e11d48",border:"1px solid #fecdd3",borderRadius:9,padding:"10px 12px",fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>Ganti</button>}
+                          </div>
+                        </div>
+                      ) : (
+                        <label style={{display:"flex",flexDirection:"column",alignItems:"center",gap:8,background:"white",border:"2px dashed #bfdbfe",borderRadius:12,padding:20,cursor:"pointer"}}>
+                          <div style={{fontSize:32}}>📷</div>
+                          <div style={{fontSize:13,fontWeight:600,color:"#1d4ed8"}}>Klik untuk upload bukti transfer</div>
+                          <div style={{fontSize:11,color:"#93c5fd"}}>JPG, PNG, PDF — maks 5MB</div>
+                          <input type="file" accept="image/*,application/pdf" style={{display:"none"}} onChange={async e=>{
+                            const file = e.target.files[0]; if(!file) return;
+                            setUploadingProof(true);
+                            const path = `proofs/${lastOrderCode}-${Date.now()}.${file.name.split(".").pop()}`;
+                            const {error} = await supabase.storage.from("media").upload(path, file, {upsert:true});
+                            if(error){alert("Gagal upload: "+error.message);setUploadingProof(false);return;}
+                            const {data:u} = supabase.storage.from("media").getPublicUrl(path);
+                            setProofUrl(u.publicUrl);
+                            setUploadingProof(false);
+                          }} />
+                          {uploadingProof && <div style={{fontSize:12,color:"#3b82f6"}}>⏳ Mengupload...</div>}
+                        </label>
+                      )}
+                    </div>
+                  )}
+
+                  <button onClick={()=>{setOpen(false);setStep("cart");setProofUrl("");setProofSent(false);if(onOrderDone)onOrderDone();}} style={{width:"100%",background:"#18181b",color:"white",border:"none",borderRadius:10,padding:"12px 28px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                    Lihat Pesanan Saya →
                   </button>
                 </div>
               )}
@@ -597,6 +640,168 @@ function CartCheckout({ cart, setCart, user, onLogin, onOrderDone, onDashboard }
 // MARKETPLACE
 // ============================================================
 
+
+// ============================================================
+// TOPUP WALLET MODAL
+// ============================================================
+function TopupModal({ user, onClose, onSuccess }) {
+  const [amount, setAmount] = useState("");
+  const [payMethods, setPayMethods] = useState([]);
+  const [selectedPay, setSelectedPay] = useState(null);
+  const [proofUrl, setProofUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [step, setStep] = useState("form"); // form | success
+  const [refCode, setRefCode] = useState("");
+
+  useEffect(() => {
+    supabase.from("payment_settings").select("*").then(({data}) => setPayMethods(data||[]));
+  }, []);
+
+  const LOGOS = {
+    bca:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg",
+    bni:"https://upload.wikimedia.org/wikipedia/id/5/55/BNI_logo.svg",
+    bri:"https://upload.wikimedia.org/wikipedia/commons/6/68/BANK_BRI_logo.svg",
+    mandiri:"https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg",
+    dana:"https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg",
+    ovo:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg",
+    gopay:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Gopay_logo.svg/320px-Gopay_logo.svg.png",
+    qris:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_QRIS.svg/320px-Logo_QRIS.svg.png",
+  };
+
+  const quickAmounts = [10000,25000,50000,100000,200000,500000];
+
+  const submitTopup = async () => {
+    if (!amount || parseInt(amount) < 10000) return alert("Minimal topup Rp 10.000");
+    if (!selectedPay) return alert("Pilih metode pembayaran!");
+    if (!proofUrl) return alert("Upload bukti transfer dulu!");
+    const code = "TOP-"+Date.now();
+    const pm = payMethods.find(p=>p.id===selectedPay);
+    const payInfo = pm ? `${pm.bank_name} - ${pm.account_number} a/n ${pm.holder_name}` : "";
+    // Save topup request as pending order (type=topup)
+    await supabase.from("orders").insert([{
+      product_id: null,
+      product_name: "💰 Topup Wallet Rp "+parseInt(amount).toLocaleString("id"),
+      price: parseInt(amount),
+      quantity: 1,
+      user_email: user.email,
+      payment_method: payInfo,
+      status: "pending",
+      order_code: code,
+      order_group_id: code,
+      notes: "topup_wallet:"+parseInt(amount),
+      proof_url: proofUrl,
+    }]);
+    setRefCode(code);
+    setStep("success");
+  };
+
+  return (
+    <div style={{position:"fixed",inset:0,zIndex:400,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={onClose}>
+      <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(4px)"}} />
+      <div style={{position:"relative",background:"white",borderRadius:20,width:"90%",maxWidth:420,maxHeight:"90vh",overflowY:"auto",boxShadow:"0 24px 60px rgba(0,0,0,0.3)",color:"#18181b"}} onClick={e=>e.stopPropagation()}>
+        <div style={{padding:"16px 20px",borderBottom:"1px solid #f0f0f0",display:"flex",justifyContent:"space-between",alignItems:"center",position:"sticky",top:0,background:"white",zIndex:1}}>
+          <div style={{fontWeight:700,fontSize:15}}>💰 Topup Saldo Wallet</div>
+          <button onClick={onClose} style={{background:"none",border:"none",fontSize:20,cursor:"pointer",color:"#71717a"}}>✕</button>
+        </div>
+        {step==="success" ? (
+          <div style={{padding:28,textAlign:"center"}}>
+            <div style={{fontSize:48,marginBottom:12}}>⏳</div>
+            <div style={{fontFamily:"'DM Serif Display',serif",fontSize:20,marginBottom:8}}>Menunggu Verifikasi</div>
+            <div style={{fontSize:13,color:"#52525b",marginBottom:8,lineHeight:1.6}}>Bukti topup kamu sudah diterima. Admin akan verifikasi dan saldo akan ditambahkan segera.</div>
+            <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:10,padding:"10px 16px",fontSize:13,fontWeight:600,color:"#16a34a",marginBottom:20}}>
+              Kode Referensi: <strong>{refCode}</strong>
+            </div>
+            <button onClick={()=>{onClose();if(onSuccess)onSuccess();}} style={{background:"#18181b",color:"white",border:"none",borderRadius:10,padding:"11px 28px",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+              Oke, Tutup
+            </button>
+          </div>
+        ) : (
+          <div style={{padding:20,display:"flex",flexDirection:"column",gap:14}}>
+            {/* Amount input */}
+            <div>
+              <label style={{fontSize:12,fontWeight:700,display:"block",marginBottom:6}}>Jumlah Topup</label>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6,marginBottom:8}}>
+                {quickAmounts.map(a=>(
+                  <button key={a} onClick={()=>setAmount(String(a))}
+                    style={{background:amount===String(a)?"#18181b":"#f4f4f5",color:amount===String(a)?"white":"#18181b",border:"none",borderRadius:8,padding:"8px 4px",fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                    {formatRp(a)}
+                  </button>
+                ))}
+              </div>
+              <input className="dinput" type="number" value={amount} onChange={e=>setAmount(e.target.value)}
+                placeholder="Atau masukkan jumlah lain..." style={{color:"#18181b"}} />
+              {amount && parseInt(amount)>=10000 && (
+                <div style={{fontSize:11,color:"#16a34a",marginTop:4,fontWeight:600}}>
+                  ✓ Saldo akan bertambah {formatRp(parseInt(amount))} setelah verifikasi
+                </div>
+              )}
+            </div>
+
+            {/* Payment method */}
+            <div>
+              <label style={{fontSize:12,fontWeight:700,display:"block",marginBottom:8}}>Transfer ke</label>
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                {payMethods.map(pm=>(
+                  <div key={pm.id} onClick={()=>setSelectedPay(pm.id)}
+                    style={{display:"flex",alignItems:"center",gap:12,padding:"11px 13px",borderRadius:11,border:"2px solid "+(selectedPay===pm.id?"#18181b":"#e4e4e7"),cursor:"pointer"}}>
+                    <div style={{width:36,height:36,borderRadius:8,background:"white",border:"1px solid #e4e4e7",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,overflow:"hidden",padding:2}}>
+                      {LOGOS[pm.method_name]?<img src={LOGOS[pm.method_name]} alt={pm.bank_name} style={{width:"100%",height:"100%",objectFit:"contain"}}/>:<span>💳</span>}
+                    </div>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:600,fontSize:13}}>{pm.bank_name}</div>
+                      {pm.account_number&&<div style={{fontSize:11,color:"#52525b",fontFamily:"monospace"}}>{pm.account_number} · {pm.holder_name}</div>}
+                    </div>
+                    <div style={{width:18,height:18,borderRadius:"50%",border:"2px solid "+(selectedPay===pm.id?"#18181b":"#d4d4d8"),display:"flex",alignItems:"center",justifyContent:"center"}}>
+                      {selectedPay===pm.id&&<div style={{width:8,height:8,borderRadius:"50%",background:"#18181b"}}/>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Proof upload */}
+            <div>
+              <label style={{fontSize:12,fontWeight:700,display:"block",marginBottom:6}}>📸 Upload Bukti Transfer</label>
+              {proofUrl ? (
+                <div>
+                  <img src={proofUrl} alt="bukti" style={{width:"100%",maxHeight:180,objectFit:"contain",borderRadius:10,border:"1.5px solid #e4e4e7",background:"#f8fafc"}} />
+                  <button onClick={()=>setProofUrl("")} style={{marginTop:8,background:"#fff1f2",color:"#e11d48",border:"1px solid #fecdd3",borderRadius:8,padding:"6px 12px",fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>
+                    🔄 Ganti Foto
+                  </button>
+                </div>
+              ) : (
+                <label style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,background:"#f8fafc",border:"2px dashed #e4e4e7",borderRadius:12,padding:16,cursor:"pointer"}}>
+                  <div style={{fontSize:28}}>📷</div>
+                  <div style={{fontSize:12,fontWeight:600,color:"#52525b"}}>Upload screenshot bukti transfer</div>
+                  <input type="file" accept="image/*" style={{display:"none"}} onChange={async e=>{
+                    const file = e.target.files[0]; if(!file) return;
+                    setUploading(true);
+                    const path = "topup/"+user.email.replace("@","_")+"-"+Date.now()+"."+file.name.split(".").pop();
+                    const {error} = await supabase.storage.from("media").upload(path, file, {upsert:true});
+                    if(error){alert("Gagal: "+error.message);setUploading(false);return;}
+                    const {data:u} = supabase.storage.from("media").getPublicUrl(path);
+                    setProofUrl(u.publicUrl); setUploading(false);
+                  }} />
+                  {uploading && <div style={{fontSize:11,color:"#71717a"}}>⏳ Mengupload...</div>}
+                </label>
+              )}
+            </div>
+
+            <div style={{background:"#fffbeb",border:"1px solid #fde68a",borderRadius:10,padding:"10px 13px",fontSize:11,color:"#92400e",lineHeight:1.5}}>
+              ⚠️ Transfer tepat sesuai jumlah yang dipilih. Admin akan verifikasi manual dan saldo ditambahkan dalam 1x24 jam.
+            </div>
+
+            <button onClick={submitTopup} disabled={uploading||!proofUrl||!selectedPay||!amount||parseInt(amount)<10000}
+              style={{background:(!proofUrl||!selectedPay||!amount)?"#e4e4e7":"#18181b",color:(!proofUrl||!selectedPay||!amount)?"#a1a1aa":"white",border:"none",borderRadius:11,padding:"13px",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+              💰 Kirim Permintaan Topup
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ============================================================
 // BUY NOW MODAL - single product direct checkout
 // ============================================================
@@ -609,6 +814,9 @@ function BuyNowModal({ product, user, onClose, onOrderDone }) {
   const [orderCode, setOrderCode] = useState("");
   const [walletBalance, setWalletBalance] = useState(0);
   const [useWallet, setUseWallet] = useState(false);
+  const [proofUrl, setProofUrl] = useState("");
+  const [uploadingProof, setUploadingProof] = useState(false);
+  const [proofSent, setProofSent] = useState(false);
 
   useEffect(() => {
     supabase.from("payment_settings").select("*").then(({data}) => setPayMethods(data||[]));
@@ -2100,6 +2308,7 @@ function OwnerDashboard({ user, onBack }) {
                   </div>
                   <div style={{fontSize:11,color:"#71717a"}}>{o.user_email} · {new Date(o.created_at).toLocaleDateString("id-ID")} · x{o.quantity||1}</div>
                   {o.buyer_link && <div style={{fontSize:12,color:"#2563eb",marginTop:4,wordBreak:"break-all"}}>🔗 {o.buyer_link}</div>}
+                  {o.proof_url && <div style={{marginTop:6}}><a href={o.proof_url} target="_blank" rel="noopener noreferrer" style={{fontSize:12,color:"#7c3aed",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4}}>📸 Lihat Bukti Transfer</a></div>}
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
                   <div>
@@ -2543,6 +2752,7 @@ function WalletCard({ email, onBalanceLoaded }) {
   const [wallet, setWallet] = useState(null);
   const [txs, setTxs] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [showTopup, setShowTopup] = useState(false);
 
   useEffect(() => {
     fetchWallet();
@@ -2568,9 +2778,14 @@ function WalletCard({ email, onBalanceLoaded }) {
         </div>
         <div style={{background:"rgba(255,255,255,0.1)",borderRadius:12,padding:"8px 14px",fontSize:12,fontWeight:600}}>💰 Wallet</div>
       </div>
-      <button onClick={()=>setShowHistory(s=>!s)} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:9,padding:"7px 14px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>
-        {showHistory?"▲ Sembunyikan":"▼ Lihat Riwayat"} ({txs.length})
-      </button>
+      <div style={{display:"flex",gap:8}}>
+        <button onClick={()=>setShowHistory(s=>!s)} style={{background:"rgba(255,255,255,0.1)",border:"1px solid rgba(255,255,255,0.2)",borderRadius:9,padding:"7px 14px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",color:"white"}}>
+          {showHistory?"▲ Sembunyikan":"▼ Riwayat"} ({txs.length})
+        </button>
+        <button onClick={()=>setShowTopup(true)} style={{background:"#facc15",color:"#18181b",border:"none",borderRadius:9,padding:"7px 14px",fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+          + Topup
+        </button>
+      </div>
       {showHistory && (
         <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
           {txs.length===0 && <div style={{fontSize:12,color:"#71717a",textAlign:"center",padding:12}}>Belum ada transaksi</div>}
@@ -2590,6 +2805,7 @@ function WalletCard({ email, onBalanceLoaded }) {
           ))}
         </div>
       )}
+      {showTopup && <TopupModal user={{email:email}} onClose={()=>setShowTopup(false)} onSuccess={()=>{setShowTopup(false);fetchWallet();}} />}
     </div>
   );
 }
