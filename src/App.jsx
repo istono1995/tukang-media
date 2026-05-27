@@ -2342,9 +2342,23 @@ function OwnerDashboard({ user, onBack }) {
                         📸 Lihat Bukti Transfer
                       </a>
                       {o.notes?.startsWith("topup_wallet:") && (
-                        <span style={{fontSize:11,background:"#fbbf24",color:"#18181b",borderRadius:6,padding:"2px 8px",fontWeight:700}}>
-                          💰 TOPUP {formatRp(parseInt(o.notes.split(":")[1])||0)}
-                        </span>
+                        <div style={{display:"flex",alignItems:"center",gap:6}}>
+                          <span style={{fontSize:11,background:"#fbbf24",color:"#18181b",borderRadius:6,padding:"2px 8px",fontWeight:700}}>
+                            💰 TOPUP {formatRp(parseInt(o.notes.split("topup_wallet:")[1])||0)}
+                          </span>
+                          {o.status==="done" && (
+                            <button onClick={async()=>{
+                              const amt = parseInt(o.notes.split("topup_wallet:")[1])||0;
+                              if(!amt){alert("Jumlah tidak valid");return;}
+                              if(!window.confirm("Tambah saldo "+formatRp(amt)+" ke "+o.user_email+"?"))return;
+                              await addWalletBalance(o.user_email, amt, "topup", "Manual topup "+o.order_code, o.order_code);
+                              alert("✅ Saldo berhasil ditambahkan!");
+                              fetchAll();
+                            }} style={{fontSize:10,background:"#16a34a",color:"white",border:"none",borderRadius:6,padding:"2px 8px",fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                              + Add Saldo Manual
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
@@ -2379,10 +2393,15 @@ function OwnerDashboard({ user, onBack }) {
                             await supabase.from("orders").update({status:newStatus}).eq("id",o.id);
                             // Auto topup wallet if topup order is set to done
                             if (newStatus==="done" && o.notes && o.notes.startsWith("topup_wallet:")) {
-                              const topupAmt = parseInt(o.notes.split("topup_wallet:")[1])||0;
+                              const topupAmt = parseInt((o.notes.split("topup_wallet:")[1]||"").trim())||0;
+                              console.log("[TOPUP] Detected topup order, amount:", topupAmt, "user:", o.user_email);
                               if (topupAmt>0) {
-                                await addWalletBalance(o.user_email, topupAmt, "topup",
+                                const result = await addWalletBalance(o.user_email, topupAmt, "topup",
                                   "Topup wallet "+o.order_code, o.order_code);
+                                console.log("[TOPUP] New balance:", result);
+                                alert("✅ Saldo "+formatRp(topupAmt)+" berhasil ditambahkan ke "+o.user_email);
+                              } else {
+                                console.warn("[TOPUP] Amount is 0, notes:", o.notes);
                               }
                             }
                             fetchAll();
