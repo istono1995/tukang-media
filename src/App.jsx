@@ -2068,6 +2068,33 @@ function OwnerPaymentTab() {
 // ============================================================
 // OWNER DASHBOARD
 // ============================================================
+const getWallet = async (email) => {
+  const { data } = await supabase.from("wallets").select("*").eq("user_email", email).maybeSingle();
+  return data;
+};
+
+const addWalletBalance = async (email, amount, type, description, orderCode) => {
+  // Upsert wallet
+  const existing = await getWallet(email);
+  const newBalance = (existing?.balance || 0) + amount;
+  await supabase.from("wallets").upsert([{user_email: email, balance: newBalance, updated_at: new Date().toISOString()}], {onConflict:"user_email"});
+  // Log transaction
+  await supabase.from("wallet_transactions").insert([{
+    user_email: email, amount, type, description, order_code: orderCode
+  }]);
+  return newBalance;
+};
+
+const deductWalletBalance = async (email, amount, description, orderCode) => {
+  const existing = await getWallet(email);
+  const newBalance = (existing?.balance || 0) - amount;
+  await supabase.from("wallets").upsert([{user_email: email, balance: newBalance, updated_at: new Date().toISOString()}], {onConflict:"user_email"});
+  await supabase.from("wallet_transactions").insert([{
+    user_email: email, amount: -amount, type: "payment", description, order_code: orderCode
+  }]);
+  return newBalance;
+};
+
 function OwnerDashboard({ user, onBack }) {
   const [tab, setTab] = useState(() => localStorage.getItem("tm_owner_tab") || "overview");
   const setTabP = (t) => { localStorage.setItem("tm_owner_tab", t); setTab(t); };
@@ -2744,32 +2771,7 @@ function AdminDashboard({ user, onBack }) {
 // ============================================================
 // WALLET HELPER FUNCTIONS
 // ============================================================
-const getWallet = async (email) => {
-  const { data } = await supabase.from("wallets").select("*").eq("user_email", email).maybeSingle();
-  return data;
-};
 
-const addWalletBalance = async (email, amount, type, description, orderCode) => {
-  // Upsert wallet
-  const existing = await getWallet(email);
-  const newBalance = (existing?.balance || 0) + amount;
-  await supabase.from("wallets").upsert([{user_email: email, balance: newBalance, updated_at: new Date().toISOString()}], {onConflict:"user_email"});
-  // Log transaction
-  await supabase.from("wallet_transactions").insert([{
-    user_email: email, amount, type, description, order_code: orderCode
-  }]);
-  return newBalance;
-};
-
-const deductWalletBalance = async (email, amount, description, orderCode) => {
-  const existing = await getWallet(email);
-  const newBalance = (existing?.balance || 0) - amount;
-  await supabase.from("wallets").upsert([{user_email: email, balance: newBalance, updated_at: new Date().toISOString()}], {onConflict:"user_email"});
-  await supabase.from("wallet_transactions").insert([{
-    user_email: email, amount: -amount, type: "payment", description, order_code: orderCode
-  }]);
-  return newBalance;
-};
 
 // ============================================================
 // WALLET DISPLAY COMPONENT
