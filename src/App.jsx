@@ -2393,15 +2393,29 @@ function OwnerDashboard({ user, onBack }) {
                             await supabase.from("orders").update({status:newStatus}).eq("id",o.id);
                             // Auto topup wallet if topup order is set to done
                             if (newStatus==="done" && o.notes && o.notes.startsWith("topup_wallet:")) {
+                              // Require viewing proof before confirming topup
+                              if (!o.proof_url) {
+                                alert("⚠️ Pesanan topup ini belum ada bukti transfer. Minta pembeli upload bukti dulu.");
+                                return;
+                              }
                               const topupAmt = parseInt((o.notes.split("topup_wallet:")[1]||"").trim())||0;
-                              console.log("[TOPUP] Detected topup order, amount:", topupAmt, "user:", o.user_email);
                               if (topupAmt>0) {
-                                const result = await addWalletBalance(o.user_email, topupAmt, "topup",
+                                const confirmed = window.confirm(
+                                  "Konfirmasi topup saldo:
+
+" +
+                                  "👤 " + o.user_email + "
+" +
+                                  "💰 " + formatRp(topupAmt) + "
+
+" +
+                                  "Pastikan kamu sudah cek bukti transfer!
+Klik OK untuk tambah saldo."
+                                );
+                                if (!confirmed) return;
+                                await addWalletBalance(o.user_email, topupAmt, "topup",
                                   "Topup wallet "+o.order_code, o.order_code);
-                                console.log("[TOPUP] New balance:", result);
-                                alert("✅ Saldo "+formatRp(topupAmt)+" berhasil ditambahkan ke "+o.user_email);
-                              } else {
-                                console.warn("[TOPUP] Amount is 0, notes:", o.notes);
+                                alert("✅ Saldo "+formatRp(topupAmt)+" berhasil ditambahkan ke "+o.user_email+"!");
                               }
                             }
                             fetchAll();
@@ -2909,7 +2923,11 @@ function OrderChat({ orderId, orderCode, currentEmail, isAdmin, orderStatus, onC
   useEffect(() => {
     if (messages.length > prevCountRef.current) {
       prevCountRef.current = messages.length;
-      bottomRef.current?.scrollIntoView({behavior:"smooth", block:"nearest"});
+      // Only auto-scroll the chat box itself, not the whole page
+      if (bottomRef.current) {
+        const chatBox = bottomRef.current.parentElement;
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+      }
     } else {
       prevCountRef.current = messages.length;
     }
