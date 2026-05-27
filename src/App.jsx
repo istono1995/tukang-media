@@ -2308,7 +2308,19 @@ function OwnerDashboard({ user, onBack }) {
                   </div>
                   <div style={{fontSize:11,color:"#71717a"}}>{o.user_email} · {new Date(o.created_at).toLocaleDateString("id-ID")} · x{o.quantity||1}</div>
                   {o.buyer_link && <div style={{fontSize:12,color:"#2563eb",marginTop:4,wordBreak:"break-all"}}>🔗 {o.buyer_link}</div>}
-                  {o.proof_url && <div style={{marginTop:6}}><a href={o.proof_url} target="_blank" rel="noopener noreferrer" style={{fontSize:12,color:"#7c3aed",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4}}>📸 Lihat Bukti Transfer</a></div>}
+                  {o.proof_url && (
+                    <div style={{marginTop:6,display:"flex",alignItems:"center",gap:8}}>
+                      <a href={o.proof_url} target="_blank" rel="noopener noreferrer"
+                        style={{fontSize:12,color:"#7c3aed",fontWeight:600,display:"inline-flex",alignItems:"center",gap:4,background:"#fdf4ff",padding:"3px 10px",borderRadius:6,border:"1px solid #e9d5ff"}}>
+                        📸 Lihat Bukti Transfer
+                      </a>
+                      {o.notes?.startsWith("topup_wallet:") && (
+                        <span style={{fontSize:11,background:"#fbbf24",color:"#18181b",borderRadius:6,padding:"2px 8px",fontWeight:700}}>
+                          💰 TOPUP {formatRp(parseInt(o.notes.split(":")[1])||0)}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
                   <div>
@@ -2335,8 +2347,17 @@ function OwnerDashboard({ user, onBack }) {
                         return (
                           <select value={o.status||"pending"} onChange={async e => {
                             const newIdx = statusOrder.indexOf(e.target.value);
-                            if (newIdx < curIdx) return; // block going backward
-                            await supabase.from("orders").update({status:e.target.value}).eq("id",o.id);
+                            if (newIdx < curIdx) return;
+                            const newStatus = e.target.value;
+                            await supabase.from("orders").update({status:newStatus}).eq("id",o.id);
+                            // Auto topup wallet if topup order is set to done
+                            if (newStatus==="done" && o.notes && o.notes.startsWith("topup_wallet:")) {
+                              const topupAmt = parseInt(o.notes.split("topup_wallet:")[1])||0;
+                              if (topupAmt>0) {
+                                await addWalletBalance(o.user_email, topupAmt, "topup",
+                                  "Topup wallet "+o.order_code, o.order_code);
+                              }
+                            }
                             fetchAll();
                           }} style={{border:"1.5px solid #e4e4e7",borderRadius:8,padding:"5px 10px",fontSize:12,fontFamily:"inherit",cursor:"pointer"}}>
                             {opts.map(opt => (
@@ -2617,8 +2638,13 @@ function AdminDashboard({ user, onBack }) {
                         return (
                           <select value={o.status||"pending"} onChange={async e => {
                             const newIdx = statusOrder.indexOf(e.target.value);
-                            if (newIdx < curIdx) return; // block going backward
-                            await supabase.from("orders").update({status:e.target.value}).eq("id",o.id);
+                            if (newIdx < curIdx) return;
+                            const newStatus = e.target.value;
+                            await supabase.from("orders").update({status:newStatus}).eq("id",o.id);
+                            if (newStatus==="done" && o.notes && o.notes.startsWith("topup_wallet:")) {
+                              const topupAmt = parseInt(o.notes.split("topup_wallet:")[1])||0;
+                              if (topupAmt>0) await addWalletBalance(o.user_email, topupAmt, "topup", "Topup wallet "+o.order_code, o.order_code);
+                            }
                             fetchData();
                           }} style={{border:"1.5px solid #e4e4e7",borderRadius:8,padding:"5px 10px",fontSize:12,fontFamily:"inherit",cursor:"pointer"}}>
                             {opts.map(opt => (
